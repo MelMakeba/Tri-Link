@@ -1,0 +1,57 @@
+@baseurl = http://localhost:3000
+@contentType = application/json
+
+@authToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2ODcxOTdiNS1kYmJhLTQwZTItYmYxMy04YTE5NjIyZWZmZTAiLCJlbWFpbCI6Im1lbGxpc2F3YW5qYTI1NEBnbWFpbC5jb20iLCJyb2xlIjoiQ1VTVE9NRVIiLCJpYXQiOjE3NTA5NDU4OTQsImV4cCI6MTc1MDk0OTQ5NH0.yzbafwo2iww_PVLBrfPPu8tqVvxHhC9tnkffxW1JFmo
+###Register Users
+##/- Customer
+
+POST {{baseurl}}/auth/register
+Content-Type: {{contentType}}
+
+{
+    "email": "mellisawanja254@gmail.com",
+    "password": "password123",
+    "firstName": "Melissa",
+    "lastName": "Wanja",
+    "phone": "+254712345678",
+    "role": "CUSTOMER"
+}
+
+###Admin User- for seeding purposes
+POST {{baseurl}}/auth/register
+Content-Type: {{contentType}}
+
+{
+    "email": "melissamakeba@gmail.com",
+    "password": "meladmin123",
+    "firstName": "Melissa",
+    "lastName": "Makeba",
+    "role": "ADMIN"
+}
+
+
+### 3. Login User
+POST {{baseurl}}/auth/login
+Content-Type: {{contentType}}
+
+{
+  "email": "mellisawanja254@gmail.com",
+  "password": "password123"
+}
+
+### 4. Login Admin
+POST {{baseurl}}/auth/login
+Content-Type: {{contentType}}
+
+{
+  "email": "melissamakeba@gmail.com",
+  "password": "meladmin123"
+}
+
+
+### 5. Get User Profile (Protected Route)
+# First login and copy the token from response, then replace YOUR_JWT_TOKEN
+GET {{baseurl}}/auth/profile
+Authorization: Bearer {{authToken}}
+Content-Type: {{contentType}}
+
