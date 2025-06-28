@@ -55,3 +55,34 @@ GET {{baseurl}}/auth/profile
 Authorization: Bearer {{authToken}}
 Content-Type: {{contentType}}
 
+### 6. Change Password (Protected Route)
+POST {{baseurl}}/auth/change-password
+Authorization: Bearer {{authToken}}
+Content-Type: {{contentType}}
+
+{
+  "currentPassword": "password123",
+  "newPassword": "newpassword123"
+}
+
+### 7. Forgot Password
+POST {{baseurl}}/auth/forgot-password
+Content-Type: {{contentType}}
+
+{
+  "email": "john.doe@example.com"
+}
+
+### 8. Reset Password
+# Use the resetToken from forgot password response
+POST {{baseurl}}/auth/reset-password
+Content-Type: {{contentType}}
+
+{
+  "token": "RESET_TOKEN_FROM_FORGOT_PASSWORD_RESPONSE",
+  "newPassword": "brandnewpassword123"
+}
+
+### 9. Verify Email
+# Use the emailVerificationToken from register response
+GET {{baseurl}}/auth/verify-email/EMAIL_VERIFICATION_TOKEN_HERE
