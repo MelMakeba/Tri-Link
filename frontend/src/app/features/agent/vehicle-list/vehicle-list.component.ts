@@ -2,16 +2,17 @@ import { Component, OnInit } from '@angular/core';
 import { AgentVehicleService } from '../../../core/services/vehicle.service';
 import { CommonModule } from '@angular/common';
 import { VehicleFormComponent } from '../vehicle-form/vehicle-form.component';
-import { RouterLinkActive } from '@angular/router';
+import { RouterLinkActive, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { Vehicle } from '../../../core/models/vehicle.model';
+import { NotificationService } from '../../../core/services/notification.service';
 
 @Component({
   selector: 'app-vehicle-list',
   templateUrl: './vehicle-list.component.html',
   styleUrls: ['./vehicle-list.component.css'],
   standalone: true,
-  imports: [CommonModule, VehicleFormComponent, RouterLinkActive, FormsModule]
+  imports: [CommonModule, VehicleFormComponent, RouterLinkActive, FormsModule, RouterModule]
 })
 export class VehicleListComponent implements OnInit {
   vehicles: Vehicle[] = [];
@@ -20,8 +21,12 @@ export class VehicleListComponent implements OnInit {
   searchTerm = '';
   showVehicleForm = false;
   selectedVehicle: Vehicle | null = null;
+  selectedVehicleForView: Vehicle | null = null;
 
-  constructor(private vehicleService: AgentVehicleService) {}
+  constructor(
+    private vehicleService: AgentVehicleService,
+    private notification: NotificationService
+  ) {}
 
   ngOnInit(): void {
     this.refreshVehicles();
@@ -66,8 +71,14 @@ export class VehicleListComponent implements OnInit {
   deleteVehicle(id: string): void {
     if (confirm('Are you sure you want to delete this vehicle?')) {
       this.vehicleService.deleteVehicle(id).subscribe({
-        next: () => this.refreshVehicles(),
-        error: () => this.error = 'Failed to delete vehicle'
+        next: () => {
+          this.refreshVehicles();
+          this.notification.success('Vehicle deleted successfully');
+        },
+        error: (err) => {
+          this.error = 'Failed to delete vehicle';
+          this.notification.error('Failed to delete vehicle', 'Error');
+        }
       });
     }
   }
@@ -75,5 +86,13 @@ export class VehicleListComponent implements OnInit {
   closeVehicleForm(event: any): void {
     this.showVehicleForm = false;
     this.selectedVehicle = null;
+  }
+
+  viewVehicle(car: Vehicle) {
+    this.selectedVehicleForView = car;
+  }
+
+  closeVehicleView() {
+    this.selectedVehicleForView = null;
   }
 }

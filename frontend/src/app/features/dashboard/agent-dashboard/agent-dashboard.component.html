@@ -3,9 +3,14 @@
   <aside class="w-56 bg-[#351243] text-white flex flex-col py-8 px-4">
     <div class="text-2xl font-bold mb-10">🚗 Tri-Link</div>
     <nav class="flex flex-col gap-4">
-      <a routerLink="/agent/dashboard" routerLinkActive="bg-[#86718e] text-[#351243]" class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-[#86718e] transition font-medium" [routerLinkActiveOptions]="{ exact: true }">
-        <span>🏠</span> Dashboard
-      </a>
+      <a 
+      routerLink="/agent/dashboard"
+      routerLinkActive="bg-[#86718e] text-[#351243]"
+      class="menu-item flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-[#86718e] transition font-medium"
+      [routerLinkActiveOptions]="{ exact: true }"
+    >
+      <span class="menu-icon">📊</span> Dashboard
+    </a>
       <a 
       routerLink="/agent/vehicles"
       routerLinkActive="bg-[#86718e] text-[#351243]"

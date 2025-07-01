@@ -113,7 +113,7 @@ export class AgentDashboardComponent implements OnInit {
   loadVehicles() {
     this.vehicleService.getVehicles().subscribe({
       next: (res) => {
-        this.totalVehicles = res?.data?.length || res?.length || 0;
+        this.totalVehicles = res?.data?.length || res?.data?.length || 0;
       }
     });
   }

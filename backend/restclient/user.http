@@ -1,7 +1,7 @@
 @baseurl = http://localhost:3000
 @contentType = application/json
 
-@userToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkNjliMjYyYi04YTJkLTQ3MjYtOWUxYy1hYjdiZDA4N2YzNWYiLCJlbWFpbCI6Im1lbGsuaWxlbmEuYUBnbWFpbC5jb20iLCJyb2xlIjoiQUdFTlQiLCJpYXQiOjE3NTEyMzU1NTAsImV4cCI6MTc1MTIzOTE1MH0.6oFPylPwZa5hm0QJ_vpUEk6mcRWPte-MTqXe5CNJ2SQ
+@userToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5ZjI4YmNkOS00OGYyLTRlNmUtYjVlZi0xNGY5ZjhlMzg1MWYiLCJlbWFpbCI6Im1lbGxpc2F3YW5qYTI1NEBnbWFpbC5jb20iLCJyb2xlIjoiQUdFTlQiLCJpYXQiOjE3NTEzNjAyMjYsImV4cCI6MTc1MTM2MzgyNn0.PEQJZniWwUieOmGxkl9eBTqp99i95FONEBV2csWZtRY
 
 ### Get User Profile (Protected)
 GET {{baseurl}}/user/profile

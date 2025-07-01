@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   Injectable,
   NotFoundException,
@@ -12,6 +14,7 @@ import { VehicleResponseDto } from './dtos/vehicle-response.dto';
 import {
   CloudinaryService,
   TriLinkUploadType,
+  CloudinaryUploadResult,
 } from '../shared/cloudinary/cloudinary.service';
 import { ApiResponseService } from '../shared/api-response.service';
 import { Request } from 'express';
@@ -198,13 +201,17 @@ export class VehicleService {
       req?.path,
     );
   }
-
   async uploadImages(
     agentId: string,
     id: string,
     files: Express.Multer.File[],
     req?: Request,
   ) {
+    // Validate maximum 2 images
+    if (files.length > 2) {
+      throw new BadRequestException('Maximum 2 images allowed per vehicle');
+    }
+
     const existingVehicle = await this.prisma.vehicle.findUnique({
       where: { id },
     });
@@ -215,35 +222,90 @@ export class VehicleService {
       );
     }
 
-    const uploadPromises = files.map((file) =>
-      this.cloudinaryService.uploadFile(
-        file,
-        TriLinkUploadType.VEHICLE_IMAGE, // Or whatever your TriLinkUploadType enum value is for vehicles
-        {
-          entityId: id,
-          entityType: 'vehicle',
-          tags: [`agent-${agentId}`],
-        },
-      ),
-    );
+    // Check if adding these images would exceed the 2 image limit
+    const currentImageCount = Array.isArray(existingVehicle.images)
+      ? existingVehicle.images.length
+      : 0;
 
-    const uploadedImages = await Promise.all(uploadPromises);
+    if (currentImageCount + files.length > 2) {
+      throw new BadRequestException(
+        `Cannot add ${files.length} images. Vehicle already has ${currentImageCount} image(s). Maximum 2 images allowed.`,
+      );
+    }
 
-    const updatedVehicle = await this.prisma.vehicle.update({
-      where: { id },
-      data: {
-        images: {
-          push: uploadedImages.map((img) => img.secure_url),
-        },
-      },
+    // Validate each file before processing
+    files.forEach((file, index) => {
+      if (!file.buffer || file.buffer.length === 0) {
+        throw new BadRequestException(
+          `File ${index + 1} is empty or corrupted`,
+        );
+      }
+
+      if (file.size < 100) {
+        throw new BadRequestException(
+          `File ${index + 1} appears to be corrupted (size: ${file.size} bytes)`,
+        );
+      }
     });
 
-    return this.apiResponse.success(
-      this.toVehicleResponseDto(updatedVehicle),
-      'Images uploaded successfully',
-      200,
-      req?.path,
-    );
+    try {
+      // Upload images sequentially to avoid overwhelming the service
+      const uploadedImages: CloudinaryUploadResult[] = [];
+
+      for (const file of files) {
+        try {
+          const uploadResult: CloudinaryUploadResult =
+            await this.cloudinaryService.uploadFile(
+              file,
+              TriLinkUploadType.VEHICLE_IMAGE,
+              {
+                entityId: id,
+                entityType: 'vehicle',
+                tags: [`agent-${agentId}`],
+              },
+            );
+          uploadedImages.push(uploadResult);
+        } catch (uploadError: any) {
+          // If one upload fails, clean up any successful uploads
+          for (const uploaded of uploadedImages) {
+            try {
+              await this.cloudinaryService.deleteFile(uploaded.public_id);
+            } catch (deleteError) {
+              console.warn(
+                `Failed to cleanup uploaded file: ${uploaded.public_id}`,
+              );
+            }
+          }
+          throw new BadRequestException(
+            `Failed to upload ${file.originalname}: ${uploadError.message}`,
+          );
+        }
+      }
+
+      // Update vehicle with new image URLs
+      const imageUrls = uploadedImages.map((img) => img.secure_url);
+      const currentImages = Array.isArray(existingVehicle.images)
+        ? existingVehicle.images
+        : [];
+
+      const updatedVehicle = await this.prisma.vehicle.update({
+        where: { id },
+        data: {
+          images: [...currentImages, ...imageUrls],
+        },
+      });
+
+      return this.apiResponse.success(
+        this.toVehicleResponseDto(updatedVehicle),
+        `${uploadedImages.length} image(s) uploaded successfully`,
+        200,
+        req?.path,
+      );
+    } catch (error: any) {
+      throw new BadRequestException(
+        `Image upload failed: ${error.message || 'Unknown error'}`,
+      );
+    }
   }
 
   async setAvailability(

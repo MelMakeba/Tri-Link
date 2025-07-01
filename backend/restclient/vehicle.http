@@ -1,25 +1,43 @@
 @baseUrl = http://localhost:3000
 @contentType = application/json
-@authToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjYjcxNGM2YS03MWIyLTQwOTUtYTYyOS1iYzM4ZmVhZjg1MTEiLCJlbWFpbCI6Im1lbGsuaWxlbmEuYUBnbWFpbC5jb20iLCJyb2xlIjoiQUdFTlQiLCJpYXQiOjE3NTEyODk0NzQsImV4cCI6MTc1MTI5MzA3NH0.v4h3zPxnoPzLpHi5ZaaXO-QvMsVmrEd7rcGsq1P-9R4
-### Create Vehicle
+@authToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5ZjI4YmNkOS00OGYyLTRlNmUtYjVlZi0xNGY5ZjhlMzg1MWYiLCJlbWFpbCI6Im1lbGxpc2F3YW5qYTI1NEBnbWFpbC5jb20iLCJyb2xlIjoiQUdFTlQiLCJpYXQiOjE3NTEzNzI2MzQsImV4cCI6MTc1MTM3NjIzNH0.IZTNRvZC2YtXRQgD_bUwdm9zqbZH3uhBmTzTxy7d8gs
+### Create Vehicle with Images
 POST {{baseUrl}}/vehicles
-Content-Type: {{contentType}}
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
 Authorization: Bearer {{authToken}}
 
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="vehicleData"
+
 {
-  "make": "Toyota",
-  "model": "Camry",
-  "year": 2022,
-  "color": "Red",
-  "licensePlate": "KCY123",
+  "make": "Honda",
+  "model": "Civic",
+  "year": 2023,
+  "color": "Blue",
+  "licensePlate": "KDL456",
   "category": "Sedan",
-  "seats": 7,
+  "seats": 5,
   "transmission": "Automatic",
-  "fuelType": "Gasoline",
-  "pricePerDay": 50,
+  "fuelType": "Hybrid",
+  "pricePerDay": 65,
   "hasGPS": true,
-  "hasAC": true
+  "hasAC": true,
+  "hasBluetooth": true,
+  "hasUSB": false,
+  "hasWiFi": false,
+  "description": ""
 }
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="images"; filename="car1.jpg"
+Content-Type: image/jpeg
+
+< /home/mel/Downloads/car-8136751_640.jpg
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="images"; filename="car2.jpg"
+Content-Type: image/jpeg
+
+< /home/mel/Documents/car1.jpeg
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
 
 ### Get All Vehicles (Paginated)
 GET {{baseUrl}}/vehicles?page=1&limit=10
@@ -43,15 +61,32 @@ DELETE {{baseUrl}}/vehicles/vehicle-id-here
 Authorization: Bearer {{authToken}}
 
 ### Upload Vehicle Images
-POST {{baseUrl}}/vehicles/a3b6dcbe-4f45-4b7c-8063-c04decbbcb6e/images
+POST {{baseUrl}}/vehicles/75c6650d-db60-4138-b92d-c93278d8cc3c/images
 Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
 Authorization: Bearer {{authToken}}
 
 ------WebKitFormBoundary7MA4YWxkTrZu0gW
-Content-Disposition: form-data; name="images"; filename="car1.jpg"
+Content-Disposition: form-data; name="images"; filename="vehicle_image.jpg"
 Content-Type: image/jpeg
 
-< ./home/mel/Documents/car1.jpeg
+< /home/mel/Downloads/car-8136751_640.jpg
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+### Upload Multiple Vehicle Images (WebKit format)
+POST {{baseUrl}}/vehicles/75c6650d-db60-4138-b92d-c93278d8cc3c/images
+Authorization: Bearer {{authToken}}
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="images"; filename="car-8136751_640.jpg"
+Content-Type: image/jpeg
+
+< /home/mel/Downloads/car-8136751_640.jpg
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="images"; filename="another-image.jpg"
+Content-Type: image/jpeg
+
+< /home/mel/Documents/car1.jpeg
 ------WebKitFormBoundary7MA4YWxkTrZu0gW--
 
 ### Set Vehicle Availability

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable no-useless-escape */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
@@ -86,18 +87,44 @@ export class CloudinaryService {
     config: TriLinkUploadConfig,
   ): void {
     if (!file) throw new BadRequestException('No file provided');
+
+    // Log detailed file information for debugging
+    this.logger.log('File validation details:', {
+      originalname: file.originalname,
+      mimetype: file.mimetype,
+      size: file.size,
+      buffer_length: file.buffer?.length,
+      fieldname: file.fieldname,
+      encoding: file.encoding,
+    });
+
+    // Check if buffer exists and has content
+    if (!file.buffer || file.buffer.length === 0) {
+      throw new BadRequestException('File buffer is empty or missing');
+    }
+
+    // Check for minimum file size (typical JPEG header is at least 100+ bytes)
+    // Temporarily disabled for debugging
+    // if (file.size < 100) {
+    //   throw new BadRequestException(
+    //     `File appears to be corrupted or empty. Size: ${file.size} bytes`,
+    //   );
+    // }
+
     if (file.size > config.maxSizeBytes) {
       const maxSizeMB = (config.maxSizeBytes / (1024 * 1024)).toFixed(1);
       throw new BadRequestException(
         `File size exceeds ${maxSizeMB}MB for ${config.uploadType}`,
       );
     }
+
     const fileExtension = file.originalname?.split('.').pop()?.toLowerCase();
     if (!fileExtension || !config.allowedFormats.includes(fileExtension)) {
       throw new BadRequestException(
         `Invalid file format. Allowed: ${config.allowedFormats.join(', ')}`,
       );
     }
+
     const allowedMimeTypes = this.getMimeTypesForFormats(config.allowedFormats);
     if (!allowedMimeTypes.includes(file.mimetype)) {
       throw new BadRequestException(
@@ -178,15 +205,42 @@ export class CloudinaryService {
     },
   ): Promise<CloudinaryUploadResult> {
     const config = this.getUploadConfig(uploadType);
+
+    // Enhanced file validation
     this.validateFile(file, config);
+
+    // Additional buffer validation
+    if (!file.buffer || file.buffer.length === 0) {
+      throw new BadRequestException('File buffer is empty or missing');
+    }
+
+    // Check for minimum realistic file size
+    if (file.buffer.length < 100) {
+      throw new BadRequestException(
+        `File appears to be corrupted. Buffer size: ${file.buffer.length} bytes`,
+      );
+    }
+
     const publicId = this.generatePublicId(
       config,
       options?.entityId,
       options?.entityType,
     );
+
+    // Log upload details for debugging
+    this.logger.log(`Uploading ${uploadType} with config:`, {
+      resource_type: 'image',
+      public_id: publicId,
+      transformations: config.transformations,
+      file_size: file.size,
+      file_mimetype: file.mimetype,
+      buffer_size: file.buffer.length,
+    });
+
     const uploadOptions: any = {
       public_id: publicId,
-      resource_type: 'auto',
+      resource_type: 'image', // Explicitly set to 'image' not 'auto'
+      folder: config.folder, // Explicitly set folder
       tags: [
         uploadType,
         ...(options?.tags || []),
@@ -200,30 +254,58 @@ export class CloudinaryService {
         uploaded_at: new Date().toISOString(),
         ...(options?.context || {}),
       },
+      // Force image processing
+      invalidate: true,
+      overwrite: false,
+      unique_filename: true,
     };
+
+    // Apply transformations
     if (config.transformations) {
       uploadOptions.transformation = config.transformations;
     }
+
     return new Promise<CloudinaryUploadResult>((resolve, reject) => {
+      // Create buffer from file data to ensure it's properly formatted
+      const bufferToUpload = Buffer.isBuffer(file.buffer)
+        ? file.buffer
+        : Buffer.from(file.buffer);
+
       const uploadStream = cloudinary.uploader.upload_stream(
         uploadOptions,
         (error: any, result: any) => {
           if (error) {
-            this.logger.error(`Cloudinary upload failed: ${error.message}`);
+            this.logger.error(`Cloudinary upload failed: ${error.message}`, {
+              error_details: error,
+              upload_options: uploadOptions,
+              file_info: {
+                size: file.size,
+                mimetype: file.mimetype,
+                buffer_length: file.buffer?.length,
+                originalname: file.originalname,
+              },
+            });
             reject(new BadRequestException(`Upload failed: ${error.message}`));
           } else if (result) {
+            this.logger.log(`Upload successful: ${result.secure_url}`);
+
+            // Verify the URL format is correct
+            if (!result.secure_url.includes('/image/upload/')) {
+              this.logger.warn(`Unexpected URL format: ${result.secure_url}`);
+            }
+
             resolve({
               public_id: result.public_id,
               secure_url: result.secure_url,
               url: result.url,
-              original_filename: result.original_filename,
+              original_filename: result.original_filename || file.originalname,
               bytes: result.bytes,
               format: result.format,
               resource_type: result.resource_type,
               created_at: result.created_at,
               width: result.width,
               height: result.height,
-              folder: result.folder,
+              folder: result.folder || config.folder,
             });
           } else {
             reject(
@@ -232,8 +314,25 @@ export class CloudinaryService {
           }
         },
       );
-      uploadStream.write(file.buffer);
-      uploadStream.end();
+
+      // Enhanced error handling for the stream
+      uploadStream.on('error', (streamError) => {
+        this.logger.error('Upload stream error:', streamError);
+        reject(new BadRequestException(`Stream error: ${streamError.message}`));
+      });
+
+      try {
+        // Write the buffer and end the stream
+        uploadStream.write(bufferToUpload);
+        uploadStream.end();
+      } catch (streamWriteError: any) {
+        this.logger.error('Error writing to upload stream:', streamWriteError);
+        reject(
+          new BadRequestException(
+            `Stream write error: ${streamWriteError.message}`,
+          ),
+        );
+      }
     });
   }
 

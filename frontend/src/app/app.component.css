@@ -27,3 +27,19 @@
       transform: translateY(0);
     }
   }
+
+  .menu-item {
+    transition: all 0.2s ease-in-out;
+  }
+  
+  .menu-item:hover {
+    transform: translateX(5px);
+  }
+  
+  .menu-icon {
+    transition: all 0.3s ease;
+  }
+  
+  .menu-item:hover .menu-icon {
+    transform: scale(1.2);
+  }

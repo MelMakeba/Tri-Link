@@ -55,59 +55,237 @@
       <span>{{ error }}</span>
     </div>
 
-    <div class="bg-white rounded-xl shadow-lg p-6">
-      <table class="min-w-full table-auto">
-        <thead>
-          <tr class="bg-[#86718e] text-white">
-            <th class="px-4 py-2 text-left">Image</th>
-            <th class="px-4 py-2 text-left">Make</th>
-            <th class="px-4 py-2 text-left">Model</th>
-            <th class="px-4 py-2 text-left">Year</th>
-            <th class="px-4 py-2 text-left">License Plate</th>
-            <th class="px-4 py-2 text-left">Status</th>
-            <th class="px-4 py-2 text-left">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let car of vehicles" class="hover:bg-[#f3e8ff] transition">
-            <td class="px-4 py-2">
-              <img 
-                *ngIf="car.images && car.images.length"
-                [src]="car.images[0]" 
-                alt="Vehicle image"
-                class="w-14 h-14 object-cover rounded shadow border border-[#86718e]" 
-              />
-              <span *ngIf="!car.images || !car.images.length" class="text-[#86718e] text-xs">No image</span>
-            </td>
-            <td class="px-4 py-2">{{ car.make }}</td>
-            <td class="px-4 py-2">{{ car.model }}</td>
-            <td class="px-4 py-2">{{ car.year }}</td>
-            <td class="px-4 py-2">{{ car.licensePlate }}</td>
-            <td class="px-4 py-2">
-              <span 
-                [ngClass]="{
-                  'bg-green-100 text-green-800': car.status === 'AVAILABLE',
-                  'bg-yellow-100 text-yellow-800': car.status === 'MAINTENANCE',
-                  'bg-red-100 text-red-800': car.status === 'INACTIVE'
-                }"
-                class="px-2 py-1 rounded text-xs font-semibold"
-              >
-                {{ car.status }}
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div *ngFor="let car of vehicles" 
+           class="bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 border border-gray-100">
+        
+        <!-- Vehicle Image -->
+        <div class="relative h-48 bg-gray-200">
+          <img *ngIf="car.images && car.images.length" 
+               [src]="car.images[0]" 
+               alt="{{ car.make }} {{ car.model }}"
+               class="w-full h-full object-cover" />
+          
+          <div *ngIf="!car.images || !car.images.length" 
+               class="flex items-center justify-center h-full bg-gray-100">
+            <span class="text-gray-400">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+            </span>
+          </div>
+          
+          <div class="absolute top-3 right-3">
+            <span [ngClass]="{
+              'bg-green-100 text-green-800': car.status === 'AVAILABLE',
+              'bg-yellow-100 text-yellow-800': car.status === 'MAINTENANCE',
+              'bg-red-100 text-red-800': car.status === 'INACTIVE',
+              'bg-blue-100 text-blue-800': car.status === 'RENTED'
+            }" class="px-3 py-1 rounded-full text-xs font-semibold">
+              {{ car.status }}
+            </span>
+          </div>
+        </div>
+        
+        <!-- Vehicle Info -->
+        <div class="p-5">
+          <h3 class="text-xl font-bold text-[#351243]">{{ car.make }} {{ car.model }}</h3>
+          <p class="text-[#86718e] text-sm">{{ car.year }} • {{ car.licensePlate }}</p>
+          
+          <div class="mt-3 flex items-center space-x-4">
+            <div class="flex items-center">
+              <span class="text-gray-500">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
               </span>
-            </td>
-            <td class="px-4 py-2 flex gap-2">
-              <button (click)="editVehicle(car)" class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded hover:bg-yellow-200 transition">Edit</button>
-              <button (click)="deleteVehicle(car.id)" class="bg-red-100 text-red-800 px-3 py-1 rounded hover:bg-red-200 transition">Delete</button>
-            </td>
-          </tr>
-          <tr *ngIf="!vehicles?.length && !isLoading">
-            <td colspan="7" class="text-center text-[#86718e] py-8">No vehicles found.</td>
-          </tr>
-        </tbody>
-      </table>
+              <span class="text-sm">{{ car.transmission }}</span>
+            </div>
+            
+            <div class="flex items-center">
+              <span class="text-gray-500">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </span>
+              <span class="text-sm">{{ car.fuelType }}</span>
+            </div>
+            
+            <div class="flex items-center">
+              <span class="text-gray-500">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+              </span>
+              <span class="text-sm">{{ car.seats }} seats</span>
+            </div>
+          </div>
+          
+          <div class="mt-4 flex justify-between items-center">
+            <p class="text-lg font-bold text-[#431216]">${{ car.pricePerDay }}<span class="text-sm font-normal">/day</span></p>
+            
+            <div class="flex space-x-2">
+              <button (click)="editVehicle(car); $event.stopPropagation()" class="p-2 bg-yellow-100 text-yellow-700 rounded-full hover:bg-yellow-200 transition">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                </svg>
+              </button>
+              <button (click)="deleteVehicle(car.id); $event.stopPropagation()" class="p-2 bg-red-100 text-red-700 rounded-full hover:bg-red-200 transition">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Action Area -->
+        <div class="px-5 py-3 bg-gray-50 border-t border-gray-100">
+          <button (click)="viewVehicle(car)" class="w-full bg-gradient-to-r from-[#86718e] to-[#351243] text-white py-2 rounded-lg font-semibold shadow hover:from-[#351243] hover:to-[#431216] transition-all duration-200 text-sm">
+            View Details
+          </button>
+        </div>
+      </div>
     </div>
 
-    <!-- Add/Edit Vehicle Modal (pseudo, implement as needed) -->
+    <!-- Vehicle Details Overlay -->
+    <div 
+      *ngIf="selectedVehicleForView" 
+      class="fixed inset-0 z-50 flex items-center justify-center"
+    >
+      <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" (click)="closeVehicleView()"></div>
+      
+      <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+        <button (click)="closeVehicleView()" class="absolute top-4 right-4 z-10 bg-white/80 rounded-full p-2 text-[#351243] hover:bg-[#86718e] hover:text-white transition-all duration-200">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+        
+        <div class="flex flex-col md:flex-row">
+          <!-- Image Section -->
+          <div class="w-full md:w-1/2 bg-gradient-to-br from-[#86718e]/20 via-white to-[#431216]/20 p-8 flex items-center justify-center">
+            <div class="relative w-full h-[300px]">
+              <img 
+                *ngIf="selectedVehicleForView.images && selectedVehicleForView.images.length"
+                [src]="selectedVehicleForView.images[0]"
+                alt="Vehicle image"
+                class="w-full h-full object-contain rounded-lg shadow-lg"
+              />
+              <div *ngIf="!selectedVehicleForView.images || !selectedVehicleForView.images.length" 
+                   class="w-full h-full flex items-center justify-center bg-gray-100 rounded-lg">
+                <span class="text-gray-400 text-lg">No image available</span>
+              </div>
+              
+              <!-- Image Navigation for multiple images -->
+              <div *ngIf="selectedVehicleForView.images && selectedVehicleForView.images.length > 1" 
+                   class="absolute -bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
+                <button *ngFor="let img of selectedVehicleForView.images; let i = index" 
+                        class="w-3 h-3 rounded-full bg-[#86718e]">
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Info Section -->
+          <div class="w-full md:w-1/2 p-8">
+            <div class="flex justify-between items-start">
+              <div>
+                <h2 class="text-2xl font-bold text-[#351243]">
+                  {{ selectedVehicleForView.make }} {{ selectedVehicleForView.model }}
+                </h2>
+                <p class="text-[#86718e]">{{ selectedVehicleForView.year }} • {{ selectedVehicleForView.category }}</p>
+              </div>
+              
+              <span [ngClass]="{
+                'bg-green-100 text-green-800': selectedVehicleForView.status === 'AVAILABLE',
+                'bg-yellow-100 text-yellow-800': selectedVehicleForView.status === 'MAINTENANCE',
+                'bg-red-100 text-red-800': selectedVehicleForView.status === 'INACTIVE',
+                'bg-blue-100 text-blue-800': selectedVehicleForView.status === 'RENTED'
+              }" class="px-3 py-1 rounded-full text-sm font-semibold">
+                {{ selectedVehicleForView.status }}
+              </span>
+            </div>
+            
+            <div class="mt-6 grid grid-cols-2 gap-4">
+              <div class="bg-gray-50 p-4 rounded-lg">
+                <p class="text-sm text-[#86718e]">License Plate</p>
+                <p class="font-semibold text-[#351243]">{{ selectedVehicleForView.licensePlate }}</p>
+              </div>
+              
+              <div class="bg-gray-50 p-4 rounded-lg">
+                <p class="text-sm text-[#86718e]">Color</p>
+                <p class="font-semibold text-[#351243]">{{ selectedVehicleForView.color }}</p>
+              </div>
+              
+              <div class="bg-gray-50 p-4 rounded-lg">
+                <p class="text-sm text-[#86718e]">Transmission</p>
+                <p class="font-semibold text-[#351243]">{{ selectedVehicleForView.transmission }}</p>
+              </div>
+              
+              <div class="bg-gray-50 p-4 rounded-lg">
+                <p class="text-sm text-[#86718e]">Fuel Type</p>
+                <p class="font-semibold text-[#351243]">{{ selectedVehicleForView.fuelType }}</p>
+              </div>
+              
+              <div class="bg-gray-50 p-4 rounded-lg">
+                <p class="text-sm text-[#86718e]">Seats</p>
+                <p class="font-semibold text-[#351243]">{{ selectedVehicleForView.seats }}</p>
+              </div>
+              
+              <div class="bg-gray-50 p-4 rounded-lg">
+                <p class="text-sm text-[#86718e]">Price/Day</p>
+                <p class="font-semibold text-[#351243]">${{ selectedVehicleForView.pricePerDay }}</p>
+              </div>
+            </div>
+            
+            <div *ngIf="selectedVehicleForView.description" class="mt-6 bg-gray-50 p-4 rounded-lg">
+              <p class="text-sm text-[#86718e]">Description</p>
+              <p class="font-semibold text-[#351243]">{{ selectedVehicleForView.description }}</p>
+            </div>
+            
+            <div class="mt-6">
+              <h3 class="text-lg font-semibold text-[#351243] mb-3">Features</h3>
+              <div class="flex flex-wrap gap-2">
+                <span *ngIf="selectedVehicleForView.hasGPS" 
+                      class="bg-[#351243]/10 text-[#351243] px-3 py-1 rounded-full text-xs">
+                  GPS
+                </span>
+                <span *ngIf="selectedVehicleForView.hasAC" 
+                      class="bg-[#351243]/10 text-[#351243] px-3 py-1 rounded-full text-xs">
+                  AC
+                </span>
+                <span *ngIf="selectedVehicleForView.hasBluetooth" 
+                      class="bg-[#351243]/10 text-[#351243] px-3 py-1 rounded-full text-xs">
+                  Bluetooth
+                </span>
+                <span *ngIf="selectedVehicleForView.hasUSB" 
+                      class="bg-[#351243]/10 text-[#351243] px-3 py-1 rounded-full text-xs">
+                  USB
+                </span>
+                <span *ngIf="selectedVehicleForView.hasWiFi" 
+                      class="bg-[#351243]/10 text-[#351243] px-3 py-1 rounded-full text-xs">
+                  WiFi
+                </span>
+              </div>
+            </div>
+            
+            <div class="mt-6 flex space-x-4">
+              <button (click)="editVehicle(selectedVehicleForView); closeVehicleView()" 
+                      class="flex-1 bg-yellow-100 text-yellow-800 px-4 py-3 rounded-lg hover:bg-yellow-200 transition font-semibold">
+                Edit Vehicle
+              </button>
+              <button (click)="deleteVehicle(selectedVehicleForView.id); closeVehicleView()" 
+                      class="flex-1 bg-red-100 text-red-800 px-4 py-3 rounded-lg hover:bg-red-200 transition font-semibold">
+                Delete Vehicle
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add/Edit Vehicle Modal -->
     <app-vehicle-form 
       *ngIf="showVehicleForm"
       [vehicle]="selectedVehicle"

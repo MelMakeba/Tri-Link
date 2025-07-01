@@ -27,6 +27,11 @@ export class ProfilePageComponent implements OnInit, OnDestroy {
   error: string | null = null;
   successMessage: string | null = null;
 
+  // Booking and loyalty points
+  activeBookings = 0;
+  loyaltyPoints = 0;
+  pastBookings = 0;
+
   private destroy$ = new Subject<void>();
 
   constructor(private userProfileService: UserProfileService) {}
