@@ -1,0 +1,118 @@
+<div class="flex min-h-screen bg-gradient-to-br from-[#86718e] via-white to-[#431216]">
+  <!-- Sidebar -->
+  <aside class="w-56 bg-[#351243] text-white flex flex-col py-8 px-4">
+    <div class="text-2xl font-bold mb-10">🚗 Tri-Link</div>
+    <nav class="flex flex-col gap-4">
+      <a routerLink="/agent/dashboard" routerLinkActive="bg-[#86718e] text-[#351243]" class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-[#86718e] transition font-medium" [routerLinkActiveOptions]="{ exact: true }">
+        <span>🏠</span> Dashboard
+      </a>
+      <a routerLink="/agent/vehicles" routerLinkActive="bg-[#86718e] text-[#351243]" class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-[#86718e] transition font-medium">
+        <span>🚙</span> My Vehicles
+      </a>
+      <a routerLink="/agent/bookings" routerLinkActive="bg-[#86718e] text-[#351243]" class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-[#86718e] transition font-medium">
+        <span>📅</span> Bookings
+      </a>
+      <a routerLink="/profile" routerLinkActive="bg-[#86718e] text-[#351243]" class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-[#86718e] transition font-medium">
+        <span>👤</span> Profile
+      </a>
+      <a routerLink="/support" routerLinkActive="bg-[#86718e] text-[#351243]" class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-[#86718e] transition font-medium">
+        <span>💬</span> Support
+      </a>
+    </nav>
+    <div class="mt-auto pt-8 border-t border-[#86718e]">
+      <button (click)="openAddVehicle()" class="w-full bg-[#86718e] text-[#351243] py-2 rounded-lg font-semibold shadow hover:bg-[#431216] hover:text-white transition">
+        <span>➕</span> Add Vehicle
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="flex-1 p-8">
+    <div class="flex justify-between items-center mb-8">
+      <div>
+        <h2 class="text-2xl font-bold text-[#351243]">My Vehicles</h2>
+        <div class="text-[#86718e]">Manage your fleet</div>
+      </div>
+      <div class="flex items-center gap-4">
+        <input 
+          type="text" 
+          placeholder="Search vehicles..." 
+          class="px-3 py-2 rounded-lg border border-[#86718e] focus:outline-none focus:ring-2 focus:ring-[#351243]"
+          [(ngModel)]="searchTerm"
+        />
+        <button class="bg-[#86718e] text-white px-4 py-2 rounded-lg font-semibold shadow hover:bg-[#351243] transition" (click)="searchVehicles()">
+          Filter
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="isLoading" class="flex justify-center items-center py-8">
+      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-[#351243] mr-3"></div>
+      <span class="text-[#351243] font-medium">Loading vehicles...</span>
+    </div>
+    <div *ngIf="error" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
+      <span class="mr-2">⚠️</span>
+      <span>{{ error }}</span>
+    </div>
+
+    <div class="bg-white rounded-xl shadow-lg p-6">
+      <table class="min-w-full table-auto">
+        <thead>
+          <tr class="bg-[#86718e] text-white">
+            <th class="px-4 py-2 text-left">Image</th>
+            <th class="px-4 py-2 text-left">Make</th>
+            <th class="px-4 py-2 text-left">Model</th>
+            <th class="px-4 py-2 text-left">Year</th>
+            <th class="px-4 py-2 text-left">License Plate</th>
+            <th class="px-4 py-2 text-left">Status</th>
+            <th class="px-4 py-2 text-left">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let car of vehicles" class="hover:bg-[#f3e8ff] transition">
+            <td class="px-4 py-2">
+              <img 
+                *ngIf="car.images && car.images.length"
+                [src]="car.images[0]" 
+                alt="Vehicle image"
+                class="w-14 h-14 object-cover rounded shadow border border-[#86718e]" 
+              />
+              <span *ngIf="!car.images || !car.images.length" class="text-[#86718e] text-xs">No image</span>
+            </td>
+            <td class="px-4 py-2">{{ car.make }}</td>
+            <td class="px-4 py-2">{{ car.model }}</td>
+            <td class="px-4 py-2">{{ car.year }}</td>
+            <td class="px-4 py-2">{{ car.licensePlate }}</td>
+            <td class="px-4 py-2">
+              <span 
+                [ngClass]="{
+                  'bg-green-100 text-green-800': car.status === 'AVAILABLE',
+                  'bg-yellow-100 text-yellow-800': car.status === 'MAINTENANCE',
+                  'bg-red-100 text-red-800': car.status === 'INACTIVE'
+                }"
+                class="px-2 py-1 rounded text-xs font-semibold"
+              >
+                {{ car.status }}
+              </span>
+            </td>
+            <td class="px-4 py-2 flex gap-2">
+              <button (click)="editVehicle(car)" class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded hover:bg-yellow-200 transition">Edit</button>
+              <button (click)="deleteVehicle(car.id)" class="bg-red-100 text-red-800 px-3 py-1 rounded hover:bg-red-200 transition">Delete</button>
+            </td>
+          </tr>
+          <tr *ngIf="!vehicles?.length && !isLoading">
+            <td colspan="7" class="text-center text-[#86718e] py-8">No vehicles found.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Add/Edit Vehicle Modal (pseudo, implement as needed) -->
+    <app-vehicle-form 
+      *ngIf="showVehicleForm"
+      [vehicle]="selectedVehicle"
+      (close)="closeVehicleForm($event)"
+      (saved)="refreshVehicles()">
+    </app-vehicle-form>
+  </main>
+</div>

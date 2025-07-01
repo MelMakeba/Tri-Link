@@ -1,0 +1,79 @@
+<div class="flex min-h-screen bg-gradient-to-br from-[#86718e] via-white to-[#431216]">
+  <!-- Sidebar (reuse your sidebar here) -->
+  <aside class="w-56 bg-[#351243] text-white flex flex-col py-8 px-4">
+    <div class="text-2xl font-bold mb-10">🚗 Tri-Link</div>
+    <nav class="flex flex-col gap-4">
+      <a routerLink="/agent/dashboard" routerLinkActive="bg-[#86718e] text-[#351243]" class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-[#86718e] transition font-medium" [routerLinkActiveOptions]="{ exact: true }">
+        <span>🏠</span> Dashboard
+      </a>
+      <a 
+      routerLink="/agent/vehicles"
+      routerLinkActive="bg-[#86718e] text-[#351243]"
+      class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-[#86718e] transition font-medium"
+    >
+      <span>🚙</span> My Vehicles
+    </a>
+    <a 
+      routerLink="/agent/bookings"
+      routerLinkActive="bg-[#86718e] text-[#351243]"
+      class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-[#86718e] transition font-medium"
+    >
+      <span>📅</span> Bookings
+    </a>
+    <a 
+      routerLink="/profile"
+      routerLinkActive="bg-[#86718e] text-[#351243]"
+      class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-[#86718e] transition font-medium"
+    >
+      <span>👤</span> Profile
+    </a>
+    <a 
+      routerLink="/support"
+      routerLinkActive="bg-[#86718e] text-[#351243]"
+      class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-[#86718e] transition font-medium"
+    >
+      <span>💬</span> Support
+    </a>
+    </nav>
+    <div class="mt-auto pt-8 border-t border-[#86718e]">
+      <button (click)="logout()" class="w-full bg-red-600 text-white py-2 rounded-lg font-semibold shadow hover:bg-red-700 transition mt-4">
+        <span>🚪</span> Logout
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="flex-1 p-8">
+    <div *ngIf="isLoading" class="flex justify-center items-center py-8">
+      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-[#351243] mr-3"></div>
+      <span class="text-[#351243] font-medium">Loading...</span>
+    </div>
+    <div *ngIf="error" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
+      <span class="mr-2">⚠️</span>
+      <span>{{ error }}</span>
+    </div>
+
+    <div *ngIf="currentUser" class="flex items-center gap-4 mb-8">
+      <img [src]="currentUser.avatar || '/assets/avatar-default.png'" class="w-16 h-16 rounded-full border" alt="Avatar" />
+      <div>
+        <div class="font-bold text-lg">{{ currentUser.firstName }} {{ currentUser.lastName }}</div>
+        <div class="text-sm text-gray-500">{{ currentUser.email }}</div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <div class="bg-white rounded-xl shadow-lg p-6 text-center">
+        <h3 class="text-[#86718e] font-semibold mb-2">Total Vehicles</h3>
+        <div class="text-3xl font-bold text-[#351243]">{{ totalVehicles }}</div>
+      </div>
+      <div class="bg-white rounded-xl shadow-lg p-6 text-center">
+        <h3 class="text-[#86718e] font-semibold mb-2">Total Bookings</h3>
+        <div class="text-3xl font-bold text-[#351243]">{{ totalBookings }}</div>
+      </div>
+      <div class="bg-white rounded-xl shadow-lg p-6 text-center">
+        <h3 class="text-[#86718e] font-semibold mb-2">Average Rating</h3>
+        <div class="text-3xl font-bold text-[#351243]">{{ averageRating }}</div>
+      </div>
+    </div>
+  </main>
+</div>

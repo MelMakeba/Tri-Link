@@ -1,0 +1,217 @@
+<div class="flex min-h-screen bg-gradient-to-br from-[#86718e] via-white to-[#431216]">
+  <!-- Sidebar -->
+  <aside class="w-56 bg-[#351243] text-white flex flex-col py-8 px-4">
+    <div class="text-2xl font-bold mb-10">🚗 Tri-Link</div>
+    <nav class="flex flex-col gap-4">
+      <!-- Customer Links -->
+      <ng-container *ngIf="userRole === 'CUSTOMER'">
+        <a 
+          routerLink="/customer/dashboard"
+          routerLinkActive="bg-[#86718e] text-[#351243]"
+          class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-[#86718e] transition font-medium"
+          [routerLinkActiveOptions]="{ exact: true }"
+        >
+          <span>🏠</span> Dashboard
+        </a>
+        <a 
+          routerLink="/bookings"
+          routerLinkActive="bg-[#86718e] text-[#351243]"
+          class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-[#86718e] transition font-medium"
+        >
+          <span>📅</span> My Bookings
+        </a>
+        <a 
+          routerLink="/profile"
+          routerLinkActive="bg-[#86718e] text-[#351243]"
+          class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-[#86718e] transition font-medium"
+        >
+          <span>👤</span> Profile
+        </a>
+        <a 
+          routerLink="/support"
+          routerLinkActive="bg-[#86718e] text-[#351243]"
+          class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-[#86718e] transition font-medium"
+        >
+          <span>💬</span> Support
+        </a>
+      </ng-container>
+
+      <!-- Agent Links -->
+      <ng-container *ngIf="userRole === 'AGENT'">
+        <a 
+          routerLink="/agent/dashboard"
+          routerLinkActive="bg-[#86718e] text-[#351243]"
+          class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-[#86718e] transition font-medium"
+          [routerLinkActiveOptions]="{ exact: true }"
+        >
+          <span>🏠</span> Dashboard
+        </a>
+        <a 
+          routerLink="/agent/vehicles"
+          routerLinkActive="bg-[#86718e] text-[#351243]"
+          class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-[#86718e] transition font-medium"
+        >
+          <span>🚙</span> My Vehicles
+        </a>
+        <a 
+          routerLink="/agent/bookings"
+          routerLinkActive="bg-[#86718e] text-[#351243]"
+          class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-[#86718e] transition font-medium"
+        >
+          <span>📅</span> Bookings
+        </a>
+        <a 
+          routerLink="/profile"
+          routerLinkActive="bg-[#86718e] text-[#351243]"
+          class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-[#86718e] transition font-medium"
+        >
+          <span>👤</span> Profile
+        </a>
+        <a 
+          routerLink="/support"
+          routerLinkActive="bg-[#86718e] text-[#351243]"
+          class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-[#86718e] transition font-medium"
+        >
+          <span>💬</span> Support
+        </a>
+      </ng-container>
+    </nav>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="flex-1 p-8">
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-8">
+      <div>
+        <h2 class="text-3xl font-bold text-[#351243]">My Profile</h2>
+        <p class="text-[#86718e] mt-1">Manage your account information and preferences</p>
+      </div>
+      <div class="w-12 h-12 rounded-full border-2 border-[#86718e] overflow-hidden">
+        <img 
+          [src]="currentUser?.avatar || '/assets/avatar-default.png'" 
+          alt="Avatar" 
+          class="w-full h-full object-cover" 
+        />
+      </div>
+    </div>
+
+    <!-- Profile Content -->
+    <div class="space-y-6">
+      <!-- Main Profile Component -->
+      <app-profile 
+        [user]="currentUser"
+        [canEdit]="true"
+        [autoLoad]="true"
+        (profileUpdated)="onProfileUpdated($event)"
+        (profileLoaded)="onProfileLoaded($event)">
+        
+        <!-- Customer-specific content using ng-content -->
+        <div class="mt-6 p-6 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg border-l-4 border-[#86718e]">
+          <h4 class="font-semibold text-[#351243] mb-4 text-lg">Customer Dashboard Stats</h4>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm">
+              <span class="text-gray-600 font-medium">Active Bookings:</span> 
+              <span class="font-bold text-[#351243] text-lg">{{ activeBookings }}</span>
+            </div>
+            <div class="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm">
+              <span class="text-gray-600 font-medium">Loyalty Points:</span> 
+              <span class="font-bold text-[#351243] text-lg">{{ loyaltyPoints }}</span>
+            </div>
+            <div class="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm">
+              <span class="text-gray-600 font-medium">Past Bookings:</span> 
+              <span class="font-bold text-[#351243] text-lg">{{ pastBookings }}</span>
+            </div>
+            <div class="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm">
+              <span class="text-gray-600 font-medium">Member Since:</span> 
+              <span class="font-bold text-[#351243] text-lg">{{ currentUser?.createdAt | date:'MMM yyyy' }}</span>
+            </div>
+          </div>
+          
+          <!-- Customer-specific actions -->
+          <div class="mt-6 flex flex-wrap gap-3">
+            <button 
+              (click)="viewBookingHistory()" 
+              class="px-4 py-2 bg-gradient-to-r from-[#86718e] to-[#351243] text-white rounded-lg font-medium hover:from-[#351243] hover:to-[#431216] transition-all duration-200 shadow-md hover:shadow-lg">
+              📚 View History
+            </button>
+            <button 
+              (click)="redeemPoints()" 
+              class="px-4 py-2 bg-gradient-to-r from-[#431216] to-[#86718e] text-white rounded-lg font-medium hover:from-[#351243] hover:to-[#431216] transition-all duration-200 shadow-md hover:shadow-lg">
+              🎁 Redeem Points
+            </button>
+            <button 
+              (click)="downloadStatement()" 
+              class="px-4 py-2 bg-gradient-to-r from-gray-600 to-gray-700 text-white rounded-lg font-medium hover:from-gray-700] hover:to-gray-800 transition-all duration-200 shadow-md hover:shadow-lg">
+              📄 Download Statement
+            </button>
+          </div>
+        </div>
+      </app-profile>
+
+      <!-- Additional Profile Sections -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Quick Settings -->
+        <div class="bg-white rounded-xl shadow-lg p-6">
+          <h3 class="text-lg font-semibold text-[#351243] mb-4">Quick Settings</h3>
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-gray-700">Email Notifications</span>
+              <input 
+                type="checkbox" 
+                [checked]="currentUser?.emailNotifications"
+                (change)="toggleEmailNotifications($event)"
+                class="toggle-checkbox"
+              />
+            </div>
+            <div class="flex items-center justify-between">
+              <span class="text-gray-700">SMS Notifications</span>
+              <input 
+                type="checkbox" 
+                [checked]="currentUser?.smsNotifications"
+                (change)="toggleSmsNotifications($event)"
+                class="toggle-checkbox"
+              />
+            </div>
+            <div class="flex items-center justify-between">
+              <span class="text-gray-700">Marketing Updates</span>
+              <input 
+                type="checkbox" 
+                [checked]="currentUser?.marketingUpdates"
+                (change)="toggleMarketingUpdates($event)"
+                class="toggle-checkbox"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="bg-white rounded-xl shadow-lg p-6">
+          <h3 class="text-lg font-semibold text-[#351243] mb-4">Recent Activity</h3>
+          <div class="space-y-3">
+            <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+              <span class="text-2xl">🚗</span>
+              <div>
+                <p class="font-medium text-gray-800">Booking Confirmed</p>
+                <p class="text-sm text-gray-600">Toyota Camry - Today at 2:30 PM</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+              <span class="text-2xl">⭐</span>
+              <div>
+                <p class="font-medium text-gray-800">Points Earned</p>
+                <p class="text-sm text-gray-600">+50 points from last booking</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+              <span class="text-2xl">✏️</span>
+              <div>
+                <p class="font-medium text-gray-800">Profile Updated</p>
+                <p class="text-sm text-gray-600">Contact information changed</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>

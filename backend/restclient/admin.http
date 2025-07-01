@@ -1,0 +1,29 @@
+@baseurl = http://localhost:3000
+@contentType = application/json
+
+@adminToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzOTc1NDE4My05OGMwLTRhMzQtYmM3Ni00ODBiODc3Mjk5YmUiLCJlbWFpbCI6Im1lbGlzc2FtYWtlYmFAZ21haWwuY29tIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzUxMjM3NzkzLCJleHAiOjE3NTEyNDEzOTN9.xMrIsLJzmortt9jHVkfz4ycFiWeQMITN5z8WMj9MEyo
+@userToken = <PASTE_USER_JWT_TOKEN_HERE>
+@userId = d69b262b-8a2d-4726-9e1c-ab7bd087f35f
+### Get all users (ADMIN)
+GET {{baseurl}}/user
+Authorization: Bearer {{adminToken}}
+Content-Type: {{contentType}}
+
+### Get total users count (ADMIN)
+GET {{baseurl}}/user/count
+Authorization: Bearer {{adminToken}}
+Content-Type: {{contentType}}
+
+### Change user role (ADMIN)
+PUT {{baseurl}}/user/{{userId}}/role
+Authorization: Bearer {{adminToken}}
+Content-Type: {{contentType}}
+
+{
+  "role": "CUSTOMER"
+}
+
+### Delete user (ADMIN)
+DELETE {{baseurl}}/user/{{userId}}
+Authorization: Bearer {{adminToken}}
+Content-Type: {{contentType}}

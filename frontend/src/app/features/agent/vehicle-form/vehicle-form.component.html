@@ -1,0 +1,111 @@
+<div class="fixed inset-0 z-50 flex items-center justify-center">
+  <!-- Blurred overlay -->
+  <div class="absolute inset-0 bg-white/40 backdrop-blur-[4px]"></div>
+  <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto p-4 md:p-8 border-2 border-[#86718e]">
+    <button (click)="cancel()" class="absolute top-3 right-4 text-[#86718e] hover:text-[#351243] text-2xl font-bold z-10">&times;</button>
+    <h2 class="text-xl md:text-2xl font-bold text-[#351243] mb-4 md:mb-6 text-center">
+      {{ vehicle ? 'Edit Vehicle' : 'Add New Vehicle' }}
+    </h2>
+    <form (ngSubmit)="save()" #vehicleForm="ngForm" class="space-y-3 md:space-y-4">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div>
+          <label class="block text-[#351243] font-semibold mb-1">Make</label>
+          <input type="text" [(ngModel)]="form.make" name="make" required class="w-full px-3 py-2 rounded-lg border border-[#86718e] focus:outline-none focus:ring-2 focus:ring-[#351243] text-sm" />
+        </div>
+        <div>
+          <label class="block text-[#351243] font-semibold mb-1">Model</label>
+          <input type="text" [(ngModel)]="form.model" name="model" required class="w-full px-3 py-2 rounded-lg border border-[#86718e] focus:outline-none focus:ring-2 focus:ring-[#351243] text-sm" />
+        </div>
+        <div>
+          <label class="block text-[#351243] font-semibold mb-1">Year</label>
+          <input type="number" [(ngModel)]="form.year" name="year" required min="1900" max="2100" class="w-full px-3 py-2 rounded-lg border border-[#86718e] focus:outline-none focus:ring-2 focus:ring-[#351243] text-sm" />
+        </div>
+        <div>
+          <label class="block text-[#351243] font-semibold mb-1">Color</label>
+          <input type="text" [(ngModel)]="form.color" name="color" required class="w-full px-3 py-2 rounded-lg border border-[#86718e] focus:outline-none focus:ring-2 focus:ring-[#351243] text-sm" />
+        </div>
+        <div>
+          <label class="block text-[#351243] font-semibold mb-1">License Plate</label>
+          <input type="text" [(ngModel)]="form.licensePlate" name="licensePlate" required class="w-full px-3 py-2 rounded-lg border border-[#86718e] focus:outline-none focus:ring-2 focus:ring-[#351243] text-sm" />
+        </div>
+        <div>
+          <label class="block text-[#351243] font-semibold mb-1">Category</label>
+          <input type="text" [(ngModel)]="form.category" name="category" required class="w-full px-3 py-2 rounded-lg border border-[#86718e] focus:outline-none focus:ring-2 focus:ring-[#351243] text-sm" />
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="block text-[#351243] font-semibold mb-1">Seats</label>
+          <input type="number" [(ngModel)]="form.seats" name="seats" required min="1" max="20" class="w-full px-3 py-2 rounded-lg border border-[#86718e] focus:outline-none focus:ring-2 focus:ring-[#351243] text-sm" />
+        </div>
+        <div>
+          <label class="block text-[#351243] font-semibold mb-1">Transmission</label>
+          <input type="text" [(ngModel)]="form.transmission" name="transmission" required class="w-full px-3 py-2 rounded-lg border border-[#86718e] focus:outline-none focus:ring-2 focus:ring-[#351243] text-sm" />
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="block text-[#351243] font-semibold mb-1">Fuel Type</label>
+          <input type="text" [(ngModel)]="form.fuelType" name="fuelType" required class="w-full px-3 py-2 rounded-lg border border-[#86718e] focus:outline-none focus:ring-2 focus:ring-[#351243] text-sm" />
+        </div>
+        <div>
+          <label class="block text-[#351243] font-semibold mb-1">Price/Day</label>
+          <input type="number" [(ngModel)]="form.pricePerDay" name="pricePerDay" required min="0" class="w-full px-3 py-2 rounded-lg border border-[#86718e] focus:outline-none focus:ring-2 focus:ring-[#351243] text-sm" />
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="block text-[#351243] font-semibold mb-1">Status</label>
+          <select [(ngModel)]="form.status" name="status" class="w-full px-3 py-2 rounded-lg border border-[#86718e] focus:outline-none focus:ring-2 focus:ring-[#351243] text-sm">
+            <option *ngFor="let status of statusOptions" [value]="status">{{ status }}</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-[#351243] font-semibold mb-1">Description</label>
+          <textarea [(ngModel)]="form.description" name="description" rows="2" class="w-full px-3 py-2 rounded-lg border border-[#86718e] focus:outline-none focus:ring-2 focus:ring-[#351243] text-sm"></textarea>
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-[#351243] font-semibold mb-1">Images</label>
+        <input type="file" (change)="onFileChange($event)" multiple class="w-full px-3 py-2 rounded-lg border border-[#86718e] bg-white focus:outline-none focus:ring-2 focus:ring-[#351243] text-sm" />
+        <div *ngIf="previewUrls.length" class="mt-2 flex flex-wrap gap-2">
+          <img *ngFor="let url of previewUrls" [src]="url" class="w-14 h-14 object-cover rounded shadow border border-[#86718e]" />
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3">
+        <div class="flex items-center gap-2">
+          <input type="checkbox" [(ngModel)]="form.hasGPS" name="hasGPS" id="hasGPS" class="accent-[#86718e]" />
+          <label for="hasGPS" class="text-[#351243] text-sm">GPS</label>
+        </div>
+        <div class="flex items-center gap-2">
+          <input type="checkbox" [(ngModel)]="form.hasAC" name="hasAC" id="hasAC" class="accent-[#86718e]" />
+          <label for="hasAC" class="text-[#351243] text-sm">AC</label>
+        </div>
+        <div class="flex items-center gap-2">
+          <input type="checkbox" [(ngModel)]="form.hasBluetooth" name="hasBluetooth" id="hasBluetooth" class="accent-[#86718e]" />
+          <label for="hasBluetooth" class="text-[#351243] text-sm">Bluetooth</label>
+        </div>
+        <div class="flex items-center gap-2">
+          <input type="checkbox" [(ngModel)]="form.hasUSB" name="hasUSB" id="hasUSB" class="accent-[#86718e]" />
+          <label for="hasUSB" class="text-[#351243] text-sm">USB</label>
+        </div>
+        <div class="flex items-center gap-2">
+          <input type="checkbox" [(ngModel)]="form.hasWiFi" name="hasWiFi" id="hasWiFi" class="accent-[#86718e]" />
+          <label for="hasWiFi" class="text-[#351243] text-sm">WiFi</label>
+        </div>
+      </div>
+
+      <div class="flex justify-end gap-3 mt-4">
+        <button type="button" (click)="cancel()" class="px-5 py-2 rounded-lg bg-gray-200 text-[#351243] font-semibold hover:bg-gray-300 transition text-sm">Cancel</button>
+        <button type="submit" [disabled]="vehicleForm.invalid || isSaving" class="px-5 py-2 rounded-lg bg-gradient-to-r from-[#86718e] to-[#351243] text-white font-semibold shadow hover:from-[#351243] hover:to-[#431216] transition-all duration-200 text-sm">
+          {{ vehicle ? 'Update' : 'Add Vehicle' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

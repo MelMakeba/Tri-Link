@@ -1,1 +1,37 @@
-<p>home works!</p>
+<app-navbar></app-navbar>
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#86718e] via-white to-[#431216] py-12 px-4">
+  <div class="bg-white rounded-2xl shadow-2xl p-10 max-w-lg w-full">
+    <div class="flex flex-col items-center mb-8">
+      <div class="bg-gradient-to-r from-[#351243] to-[#86718e] p-4 rounded-full shadow-lg mb-4">
+        <svg class="w-14 h-14 text-white" fill="currentColor" viewBox="0 0 20 20">
+          <path d="M4 3a2 2 0 00-2 2v1.5h16V5a2 2 0 00-2-2H4z"/>
+          <path fill-rule="evenodd" d="M18 7.5H2V17a2 2 0 002 2h12a2 2 0 002-2V7.5zm-12 5a.5.5 0 01.5-.5h3a.5.5 0 010 1h-3a.5.5 0 01-.5-.5zm0 2a.5.5 0 01.5-.5h7a.5.5 0 010 1h-7a.5.5 0 01-.5-.5z" clip-rule="evenodd"/>
+        </svg>
+      </div>
+      <h1 class="text-3xl font-extrabold text-[#351243] mb-2">Welcome to Tri-Link Car Rentals!</h1>
+      <p class="text-[#86718e] text-lg text-center">Your one-stop platform for renting and managing vehicles.</p>
+    </div>
+
+    <ng-container *ngIf="!user">
+      <div class="flex justify-center gap-4 mb-8">
+        <button (click)="goToLogin()"
+          class="px-6 py-2 rounded-lg bg-gradient-to-r from-[#351243] to-[#86718e] text-white font-semibold shadow hover:from-[#431216] hover:to-[#86718e] transition-all duration-150">
+          Login
+        </button>
+        <button (click)="goToRegister()"
+          class="px-6 py-2 rounded-lg border border-[#351243] text-[#351243] font-semibold bg-white hover:bg-[#86718e]/10 transition-all duration-150">
+          Register
+        </button>
+      </div>
+    </ng-container>
+
+       <div class="features mt-6">
+      <h3 class="text-xl font-bold text-[#351243] mb-3">What you can do:</h3>
+      <ul class="list-disc list-inside space-y-2 text-[#431216]">
+        <li>Search and reserve cars</li>
+        <li>Manage your rentals and profile</li>
+        <li>Admins/Agents: Manage cars, bookings, and users</li>
+      </ul>
+    </div>
+  </div>
+</div>

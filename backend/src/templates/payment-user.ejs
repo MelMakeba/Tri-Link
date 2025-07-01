@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Payment Confirmation & Receipt</title>
+  </head>
+  <body style="font-family: Arial, sans-serif; background: #f8f6fa; color: #351243; padding: 32px;">
+    <div style="max-width: 520px; margin: auto; background: #fff; border-radius: 16px; box-shadow: 0 4px 24px #86718e33; padding: 32px;">
+      <h2 style="color: #351243;">Payment Received</h2>
+      <p>Hi <b><%= name %></b>,</p>
+      <p>We have received your payment of <b>$<%= amount %></b> on <%= paymentDate %>.</p>
+      <% if (receiptUrl) { %>
+        <p>You can download your receipt <a href="<%= receiptUrl %>" style="color:#351243; text-decoration:underline;">here</a>.</p>
+      <% } %>
+      <p>Thank you for choosing Tri-Link Car Rentals!</p>
+      <p style="color: #86718e;">Tri-Link Car Rentals</p>
+    </div>
+  </body>
+</html>

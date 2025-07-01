@@ -1,0 +1,148 @@
+@host = http://localhost:3000
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkZmQ2NzZhZS0zYzc3LTQ0NWMtOTJjZS1hYzljMTYxYmQ3NDgiLCJlbWFpbCI6Im1lbGlzc2FtYWtlYmFAZ21haWwuY29tIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzUxMzE4OTMzLCJleHAiOjE3NTEzMjI1MzN9.DPpranYa_Z8rH9WCkd7GWmWlU7XN9W7yAXRpjxjvP-Y
+@booking_id = 3821d1f0-41a9-4f0f-be1c-14081bffc75b
+@user_id = b9fdd55b-02ab-44d9-84ff-522488b2dad1
+@car_id = a3b6dcbe-4f45-4b7c-8063-c04decbbcb6e
+@dispute_id = 123e4567-e89b-12d3-a456-426614174003
+
+
+
+# Admin Dashboard REST API Endpoints
+
+### Get System Stats
+GET {{host}}/admin/stats
+Authorization: Bearer {{token}}
+
+### Get Revenue Analytics (last 30 days)
+GET {{host}}/admin/analytics/revenue?days=30
+Authorization: Bearer {{token}}
+
+### Get Revenue Analytics (last 7 days)
+GET {{host}}/admin/analytics/revenue?days=7
+Authorization: Bearer {{token}}
+
+### ================================
+### BOOKING MANAGEMENT
+### ================================
+
+### Get All Bookings
+GET {{host}}/admin/bookings
+Authorization: Bearer {{token}}
+
+### Get Bookings by Status
+GET {{host}}/admin/bookings?status=PENDING
+Authorization: Bearer {{token}}
+
+### Get Pending Bookings
+GET {{host}}/admin/bookings/pending
+Authorization: Bearer {{token}}
+
+### Approve Booking
+PUT {{host}}/admin/bookings/{{booking_id}}/approve
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "status": "CONFIRMED",
+  "adminNotes": "Booking approved after document verification"
+}
+
+### Reject Booking
+PUT {{host}}/admin/bookings/{{booking_id}}/approve
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "status": "CANCELLED",
+  "adminNotes": "Rejected due to incomplete documentation"
+}
+
+### ================================
+### USER MANAGEMENT
+### ================================
+
+### Get All Users with Stats
+GET {{host}}/admin/users
+Authorization: Bearer {{token}}
+
+### Get User Details
+GET {{host}}/admin/users/{{user_id}}
+Authorization: Bearer {{token}}
+
+### Update User Status (Activate/Deactivate)
+PATCH {{host}}/admin/users/{{user_id}}/status
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "isActive": false
+}
+
+### Change User Role
+PUT {{host}}/admin/users/{{user_id}}/role
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "role": "CUSTOMER"
+}
+
+### Delete User
+DELETE {{host}}/admin/users/{{user_id}}
+Authorization: Bearer {{token}}
+
+### ================================
+### CAR MANAGEMENT
+### ================================
+
+### Get All Cars with Stats
+GET {{host}}/admin/cars
+Authorization: Bearer {{token}}
+
+### Get Car Details
+GET {{host}}/admin/cars/{{car_id}}
+Authorization: Bearer {{token}}
+
+# ### Update Car Availability Status
+# PATCH {{host}}/admin/cars/{{car_id}}/status
+# Authorization: Bearer {{token}}
+# Content-Type: application/json
+
+# {
+#   "isAvailable": false
+# }
+
+### ================================
+### LOCATION MANAGEMENT
+### ================================
+
+# ### Get All Locations with Stats
+# GET {{host}}/admin/locations
+# Authorization: Bearer {{token}}
+
+### ================================
+### FEEDBACK & DISPUTES
+### ================================
+
+### Get All Feedback
+GET {{host}}/admin/feedback
+Authorization: Bearer {{token}}
+
+### Get All Disputes
+GET {{host}}/admin/disputes
+Authorization: Bearer {{token}}
+
+### Resolve Dispute
+PUT {{host}}/admin/disputes/{{dispute_id}}/resolve
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "resolution": "Issue resolved. Customer was refunded for the inconvenience.",
+  "refundAmount": 50.00,
+  "adminNotes": "Car had mechanical issues that weren't disclosed. Partial refund issued."
+}
+
+### ================================
+### SAMPLE VARIABLES
+### ================================

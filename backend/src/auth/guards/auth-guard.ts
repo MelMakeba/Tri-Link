@@ -12,7 +12,7 @@ import { IS_PUBLIC_KEY } from '../decorators/public.decorator';
 interface JwtPayload {
   sub: string;
   email?: string;
-  // add other properties as needed
+  role?: string;
   [key: string]: any;
 }
 
@@ -44,9 +44,17 @@ export class AuthGuard implements CanActivate {
       const payload = await this.jwtService.verifyAsync<JwtPayload>(token, {
         secret: process.env.JWT_SECRET || 'trilink-secret-key',
       });
-      request['user'] = payload;
+
+      // Transform payload to match JWT Strategy format
+      request['user'] = {
+        id: payload.sub,
+        email: payload.email,
+        role: payload.role,
+      };
+
       return true;
-    } catch {
+    } catch (error) {
+      console.error('JWT verification failed:', error);
       throw new UnauthorizedException('Invalid token');
     }
   }

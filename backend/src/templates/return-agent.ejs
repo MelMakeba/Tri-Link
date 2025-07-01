@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Car Returned by Customer</title>
+  </head>
+  <body style="font-family: Arial, sans-serif; background: #f8f6fa; color: #351243; padding: 32px;">
+    <div style="max-width: 520px; margin: auto; background: #fff; border-radius: 16px; box-shadow: 0 4px 24px #86718e33; padding: 32px;">
+      <h2 style="color: #351243;">Car Returned</h2>
+      <p>Hi <b><%= agentName %></b>,</p>
+      <p>The following car has been returned by the customer:</p>
+      <ul style="color: #431216;">
+        <li><b>Customer:</b> <%= name %></li>
+        <li><b>Car:</b> <%= car %></li>
+        <li><b>Return Date:</b> <%= endDate %></li>
+      </ul>
+      <p style="color: #86718e;">Tri-Link Car Rentals</p>
+    </div>
+  </body>
+</html>

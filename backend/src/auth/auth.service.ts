@@ -22,6 +22,7 @@ import {
   RegisterResponse,
   ProfileResponse,
 } from '../shared/interfaces/api-response.interface';
+import { MailerService } from '../shared/mailer/mailer.service';
 
 @Injectable()
 export class AuthService {
@@ -29,6 +30,7 @@ export class AuthService {
     private prisma: PrismaService,
     private jwtService: JwtService,
     private apiResponse: ApiResponseService,
+    private readonly mailerService: MailerService,
   ) {}
 
   async register(
@@ -81,6 +83,11 @@ export class AuthService {
         user,
         token,
       };
+
+      await this.mailerService.sendVerificationEmail(user.email, {
+        name: user.firstName || user.email,
+        token: emailVerificationToken,
+      });
 
       return this.apiResponse.success(
         authData,
@@ -218,6 +225,12 @@ export class AuthService {
           passwordResetToken: resetToken,
           passwordResetExpires: resetExpires,
         },
+      });
+
+      await this.mailerService.sendPasswordResetEmail(user.email, {
+        name: user.firstName || user.email,
+        token: resetToken,
+        expiresIn: '1 hour',
       });
 
       // TODO: Send email with reset link

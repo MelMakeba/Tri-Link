@@ -4,7 +4,7 @@ import { ROLES_KEY } from '../decorators/roles.decorator';
 import { UserRole } from 'generated/prisma';
 
 @Injectable()
-export class JwtAuthGuard implements CanActivate {
+export class RolesGuard implements CanActivate {
   constructor(private reflector: Reflector) {}
 
   canActivate(context: ExecutionContext): boolean {

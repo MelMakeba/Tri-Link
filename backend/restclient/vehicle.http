@@ -1,0 +1,68 @@
+@baseUrl = http://localhost:3000
+@contentType = application/json
+@authToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjYjcxNGM2YS03MWIyLTQwOTUtYTYyOS1iYzM4ZmVhZjg1MTEiLCJlbWFpbCI6Im1lbGsuaWxlbmEuYUBnbWFpbC5jb20iLCJyb2xlIjoiQUdFTlQiLCJpYXQiOjE3NTEyODk0NzQsImV4cCI6MTc1MTI5MzA3NH0.v4h3zPxnoPzLpHi5ZaaXO-QvMsVmrEd7rcGsq1P-9R4
+### Create Vehicle
+POST {{baseUrl}}/vehicles
+Content-Type: {{contentType}}
+Authorization: Bearer {{authToken}}
+
+{
+  "make": "Toyota",
+  "model": "Camry",
+  "year": 2022,
+  "color": "Red",
+  "licensePlate": "KCY123",
+  "category": "Sedan",
+  "seats": 7,
+  "transmission": "Automatic",
+  "fuelType": "Gasoline",
+  "pricePerDay": 50,
+  "hasGPS": true,
+  "hasAC": true
+}
+
+### Get All Vehicles (Paginated)
+GET {{baseUrl}}/vehicles?page=1&limit=10
+
+### Get Single Vehicle
+GET {{baseUrl}}/vehicles/a3b6dcbe-4f45-4b7c-8063-c04decbbcb6e
+Authorization: Bearer {{authToken}}
+
+### Update Vehicle
+PUT {{baseUrl}}/vehicles/a3b6dcbe-4f45-4b7c-8063-c04decbbcb6e
+Content-Type: {{contentType}}
+Authorization: Bearer {{authToken}}
+
+{
+  "pricePerDay": 55,
+  "hasBluetooth": true
+}
+
+### Delete Vehicle
+DELETE {{baseUrl}}/vehicles/vehicle-id-here
+Authorization: Bearer {{authToken}}
+
+### Upload Vehicle Images
+POST {{baseUrl}}/vehicles/a3b6dcbe-4f45-4b7c-8063-c04decbbcb6e/images
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+Authorization: Bearer {{authToken}}
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="images"; filename="car1.jpg"
+Content-Type: image/jpeg
+
+< ./home/mel/Documents/car1.jpeg
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+### Set Vehicle Availability
+PUT {{baseUrl}}/vehicles/a3b6dcbe-4f45-4b7c-8063-c04decbbcb6e/availability
+Content-Type: {{contentType}}
+Authorization: Bearer {{authToken}}
+
+{
+  "status": "RENTED"
+}
+
+### Check Vehicle Availability
+GET {{baseUrl}}/vehicles/a3b6dcbe-4f45-4b7c-8063-c04decbbcb6e/availability?from=2023-07-01T00:00:00Z&to=2023-07-10T00:00:00Z
+Authorization: Bearer {{authToken}}

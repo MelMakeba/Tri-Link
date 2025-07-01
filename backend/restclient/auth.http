@@ -1,20 +1,19 @@
 @baseurl = http://localhost:3000
 @contentType = application/json
 
-@authToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2ODcxOTdiNS1kYmJhLTQwZTItYmYxMy04YTE5NjIyZWZmZTAiLCJlbWFpbCI6Im1lbGxpc2F3YW5qYTI1NEBnbWFpbC5jb20iLCJyb2xlIjoiQ1VTVE9NRVIiLCJpYXQiOjE3NTA5NDU4OTQsImV4cCI6MTc1MDk0OTQ5NH0.yzbafwo2iww_PVLBrfPPu8tqVvxHhC9tnkffxW1JFmo
-###Register Users
+@authToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkNjliMjYyYi04YTJkLTQ3MjYtOWUxYy1hYjdiZDA4N2YzNWYiLCJlbWFpbCI6Im1lbGsuaWxlbmEuYUBnbWFpbC5jb20iLCJyb2xlIjoiQUdFTlQiLCJpYXQiOjE3NTEyMzE0NjIsImV4cCI6MTc1MTIzNTA2Mn0.oTWUPJL81YKISqixKMIvWaqZJz4ZkmPorAMJkVGk208
 ##/- Customer
 
 POST {{baseurl}}/auth/register
 Content-Type: {{contentType}}
 
 {
-    "email": "mellisawanja254@gmail.com",
-    "password": "password123",
+    "email": "melk.ilena.a@gmail.com",
+    "password": "Meriken@13",
     "firstName": "Melissa",
-    "lastName": "Wanja",
-    "phone": "+254712345678",
-    "role": "CUSTOMER"
+    "lastName": "Waititu",
+    "phone": "+254712345858",
+    "role": "AGENT"
 }
 
 ###Admin User- for seeding purposes
@@ -35,8 +34,8 @@ POST {{baseurl}}/auth/login
 Content-Type: {{contentType}}
 
 {
-  "email": "mellisawanja254@gmail.com",
-  "password": "password123"
+  "email": "webs3@gmail.com",
+  "password": "QWERTY1234"
 }
 
 ### 4. Login Admin
@@ -61,7 +60,7 @@ Authorization: Bearer {{authToken}}
 Content-Type: {{contentType}}
 
 {
-  "currentPassword": "password123",
+  "currentPassword": "Meriken@13",
   "newPassword": "newpassword123"
 }
 
@@ -70,7 +69,7 @@ POST {{baseurl}}/auth/forgot-password
 Content-Type: {{contentType}}
 
 {
-  "email": "john.doe@example.com"
+  "email": "melk.ilena.a@gmail.com"
 }
 
 ### 8. Reset Password
@@ -85,4 +84,4 @@ Content-Type: {{contentType}}
 
 ### 9. Verify Email
 # Use the emailVerificationToken from register response
-GET {{baseurl}}/auth/verify-email/EMAIL_VERIFICATION_TOKEN_HERE
+GET {{baseurl}}/auth/verify-email/8253527c56695959d504c938942d5ba6f22f3441dbad4f4c3d1830c6d4beb6d5

@@ -1,0 +1,74 @@
+@baseUrl = http://localhost:3000
+@contentType = application/json
+@userToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJlZTgwYmI0Ny0wOGFjLTRkOGItOWMyYS0yNTJiNmIyODQ0NjIiLCJlbWFpbCI6IndlYnMzQGdtYWlsLmNvbSIsInJvbGUiOiJDVVNUT01FUiIsImlhdCI6MTc1MTI4OTYyNiwiZXhwIjoxNzUxMjkzMjI2fQ.dNRoMj-skUdkmLJ76NeQTAwVjOFRw5niy7xr5yl3PK0
+
+@agentToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjYjcxNGM2YS03MWIyLTQwOTUtYTYyOS1iYzM4ZmVhZjg1MTEiLCJlbWFpbCI6Im1lbGsuaWxlbmEuYUBnbWFpbC5jb20iLCJyb2xlIjoiQUdFTlQiLCJpYXQiOjE3NTEyODk0NzQsImV4cCI6MTc1MTI5MzA3NH0.v4h3zPxnoPzLpHi5ZaaXO-QvMsVmrEd7rcGsq1P-9R4
+### Create a new booking (Customer)
+POST {{baseUrl}}/bookings
+Content-Type: {{contentType}}
+Authorization: Bearer {{userToken}}
+
+{
+  "vehicleId": "377b8a59-a40b-45a7-9f3b-dd3c887abca7",
+  "startDate": "2025-07-15T08:00:00Z",
+  "endDate": "2025-07-20T18:00:00Z",
+  "startTime": "2025-07-15T08:00:00Z",
+  "endTime": "2025-07-20T18:00:00Z",
+  "pickupLocation": "123 Main St, City",
+  "returnLocation": "123 Main St, City",
+  "discountPrice": 0,
+  "couponCode": "",
+  "notes": "Special requests here",
+  "driverLicenseNumber": "DL12345678"
+}
+
+### Get all bookings for customer (Customer)
+GET {{baseUrl}}/bookings
+Authorization: Bearer {{userToken}}
+
+### Get single booking (Customer)
+GET {{baseUrl}}/bookings/booking-uuid-here
+Authorization: Bearer {{userToken}}
+
+### Update booking (Customer)
+PUT {{baseUrl}}/bookings/3821d1f0-41a9-4f0f-be1c-14081bffc75b
+Content-Type: {{contentType}}
+Authorization: Bearer {{userToken}}
+
+{
+  "pickupLocation": "456 New St, City",
+  "returnLocation": "456 New St, City",
+  "notes": "Updated special requests"
+}
+
+### Cancel booking (Customer)
+PUT {{baseUrl}}/bookings/booking-uuid-here/cancel
+Authorization: Bearer {{userToken}}
+
+### Get all bookings for agent's vehicles (Agent)
+GET {{baseUrl}}/bookings/agent/mine
+Authorization: Bearer {{agentToken}}
+
+### Update booking status (Agent/Admin)
+PUT {{baseUrl}}/bookings/3821d1f0-41a9-4f0f-be1c-14081bffc75b/status
+Content-Type: {{contentType}}
+Authorization: Bearer {{agentToken}}
+
+{
+  "status": "PENDING"
+}
+
+### Return a car (Agent/Admin)
+PUT {{baseUrl}}/bookings/3821d1f0-41a9-4f0f-be1c-14081bffc75b/return
+Content-Type: {{contentType}}
+Authorization: Bearer {{agentToken}}
+
+{
+  "condition": "GOOD",
+  "fuelLevel": "HALF",
+  "mileage": 15000
+}
+
+### Search available vehicles (Public)
+GET {{baseUrl}}/bookings/availability/search?startDate=2023-07-15&endDate=2023-07-20&location=City&category=SEDAN
+Authorization: Bearer {{userToken}}

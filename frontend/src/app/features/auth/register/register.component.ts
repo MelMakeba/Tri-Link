@@ -4,13 +4,14 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { UserRole } from '../../../core/models/user.model';
 import { CommonModule } from '@angular/common';
-
+import { ReactiveFormsModule } from '@angular/forms';
+import { NavbarComponent } from '../../../shared/navbar/navbar.component';
 @Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.css'],
   standalone: true,
-  imports: [Router, FormBuilder, CommonModule]
+  imports: [ ReactiveFormsModule , CommonModule, NavbarComponent]
 })
 export class RegisterComponent implements OnInit {
   registerForm: FormGroup;

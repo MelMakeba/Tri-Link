@@ -1,169 +1,158 @@
-<div class="min-h-screen bg-black flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-md w-full space-y-8">
-      <!-- Logo and Header -->
-      <div class="text-center">
-        <div class="flex justify-center items-center mb-6">
-          <div class="bg-gradient-to-r from-red-500 to-red-600 p-3 rounded-xl shadow-lg">
-            <svg class="w-12 h-12 text-white" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M4 3a2 2 0 00-2 2v1.5h16V5a2 2 0 00-2-2H4z"/>
-              <path fill-rule="evenodd" d="M18 7.5H2V17a2 2 0 002 2h12a2 2 0 002-2V7.5zm-12 5a.5.5 0 01.5-.5h3a.5.5 0 010 1h-3a.5.5 0 01-.5-.5zm0 2a.5.5 0 01.5-.5h7a.5.5 0 010 1h-7a.5.5 0 01-.5-.5z" clip-rule="evenodd"/>
-            </svg>
-          </div>
-        </div>
-        <h2 class="text-3xl font-bold text-white mb-2">Tri-Link</h2>
-        <p class="text-gray-300 text-lg">Car Rental System</p>
-        <h3 class="mt-6 text-2xl font-semibold text-white">Create your account</h3>
-        <p class="mt-2 text-sm text-gray-400">
-          Already have an account?
-          <a routerLink="/auth/login" class="font-medium text-red-500 hover:text-red-400 transition-colors">
-            Sign in here
+<app-navbar></app-navbar>
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#86718e] via-white to-[#431216] py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md w-full space-y-8 bg-white p-8 rounded-lg shadow-md">
+      <div>
+        <h1 class="mt-6 text-center text-3xl font-extrabold text-[#351243]">Create your account</h1>
+        <p class="mt-2 text-center text-sm text-[#86718e]">
+          Or
+          <a routerLink="/auth/login" class="font-medium text-[#431216] hover:text-[#86718e] transition-colors">
+            sign in to your account
           </a>
         </p>
       </div>
   
+      <div *ngIf="error" class="bg-[#431216]/10 border border-[#431216] text-[#431216] px-4 py-3 rounded relative" role="alert">
+        <span class="block sm:inline">{{ error }}</span>
+      </div>
+  
       <!-- Registration Form -->
-      <form class="mt-8 space-y-4" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+      <form class="mt-8 space-y-6" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
         <!-- Name Fields -->
         <div class="grid grid-cols-2 gap-4">
           <div>
-            <label for="firstName" class="block text-sm font-medium text-gray-300 mb-2">
-              First Name
-            </label>
+            <label for="firstName" class="block text-sm font-medium text-[#351243]">First Name</label>
             <input
               id="firstName"
               name="firstName"
               type="text"
               formControlName="firstName"
-              class="appearance-none relative block w-full px-4 py-3 border border-gray-600 bg-gray-800 text-white placeholder-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 sm:text-sm transition-colors"
+              required
+              class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-[#86718e] focus:outline-none focus:ring-[#351243] focus:border-[#351243] sm:text-sm"
               placeholder="First Name"
+              [ngClass]="{'border-[#431216]': registerForm.get('firstName')?.invalid && registerForm.get('firstName')?.touched}"
             />
-            <div *ngIf="firstName?.invalid && firstName?.touched" class="mt-1 text-red-400 text-sm">
-              <span *ngIf="firstName?.errors?.['required']">First name is required</span>
-              <span *ngIf="firstName?.errors?.['minlength']">Minimum 2 characters</span>
+            <div *ngIf="registerForm.get('firstName')?.invalid && registerForm.get('firstName')?.touched" class="text-[#431216] text-sm mt-1">
+              <span *ngIf="registerForm.get('firstName')?.errors?.['required']">First name is required</span>
+              <span *ngIf="registerForm.get('firstName')?.errors?.['minlength']">Minimum 2 characters</span>
             </div>
           </div>
   
           <div>
-            <label for="lastName" class="block text-sm font-medium text-gray-300 mb-2">
-              Last Name
-            </label>
+            <label for="lastName" class="block text-sm font-medium text-[#351243]">Last Name</label>
             <input
               id="lastName"
               name="lastName"
               type="text"
               formControlName="lastName"
-              class="appearance-none relative block w-full px-4 py-3 border border-gray-600 bg-gray-800 text-white placeholder-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 sm:text-sm transition-colors"
+              required
+              class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-[#86718e] focus:outline-none focus:ring-[#351243] focus:border-[#351243] sm:text-sm"
               placeholder="Last Name"
+              [ngClass]="{'border-[#431216]': registerForm.get('lastName')?.invalid && registerForm.get('lastName')?.touched}"
             />
-            <div *ngIf="lastName?.invalid && lastName?.touched" class="mt-1 text-red-400 text-sm">
-              <span *ngIf="lastName?.errors?.['required']">Last name is required</span>
-              <span *ngIf="lastName?.errors?.['minlength']">Minimum 2 characters</span>
+            <div *ngIf="registerForm.get('lastName')?.invalid && registerForm.get('lastName')?.touched" class="text-[#431216] text-sm mt-1">
+              <span *ngIf="registerForm.get('lastName')?.errors?.['required']">Last name is required</span>
+              <span *ngIf="registerForm.get('lastName')?.errors?.['minlength']">Minimum 2 characters</span>
             </div>
           </div>
         </div>
   
         <!-- Email Field -->
         <div>
-          <label for="email" class="block text-sm font-medium text-gray-300 mb-2">
-            Email Address
-          </label>
+          <label for="email" class="block text-sm font-medium text-[#351243]">Email address</label>
           <input
             id="email"
             name="email"
             type="email"
             formControlName="email"
-            class="appearance-none relative block w-full px-4 py-3 border border-gray-600 bg-gray-800 text-white placeholder-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 sm:text-sm transition-colors"
+            autocomplete="email"
+            required
+            class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-[#86718e] focus:outline-none focus:ring-[#351243] focus:border-[#351243] sm:text-sm"
             placeholder="Enter your email"
+            [ngClass]="{'border-[#431216]': registerForm.get('email')?.invalid && registerForm.get('email')?.touched}"
           />
-          <div *ngIf="email?.invalid && email?.touched" class="mt-1 text-red-400 text-sm">
-            <span *ngIf="email?.errors?.['required']">Email is required</span>
-            <span *ngIf="email?.errors?.['email']">Please enter a valid email</span>
+          <div *ngIf="registerForm.get('email')?.invalid && registerForm.get('email')?.touched" class="text-[#431216] text-sm mt-1">
+            <span *ngIf="registerForm.get('email')?.errors?.['required']">Email is required</span>
+            <span *ngIf="registerForm.get('email')?.errors?.['email']">Please enter a valid email address</span>
           </div>
         </div>
   
         <!-- Phone Field -->
         <div>
-          <label for="phone" class="block text-sm font-medium text-gray-300 mb-2">
-            Phone Number (Optional)
-          </label>
+          <label for="phone" class="block text-sm font-medium text-[#351243]">Phone Number (Optional)</label>
           <input
             id="phone"
             name="phone"
             type="tel"
             formControlName="phone"
-            class="appearance-none relative block w-full px-4 py-3 border border-gray-600 bg-gray-800 text-white placeholder-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 sm:text-sm transition-colors"
+            class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-[#86718e] focus:outline-none focus:ring-[#351243] focus:border-[#351243] sm:text-sm"
             placeholder="Enter your phone number"
+            [ngClass]="{'border-[#431216]': registerForm.get('phone')?.invalid && registerForm.get('phone')?.touched}"
           />
-          <div *ngIf="phone?.invalid && phone?.touched" class="mt-1 text-red-400 text-sm">
-            <span *ngIf="phone?.errors?.['pattern']">Please enter a valid phone number</span>
+          <div *ngIf="registerForm.get('phone')?.invalid && registerForm.get('phone')?.touched" class="text-[#431216] text-sm mt-1">
+            <span *ngIf="registerForm.get('phone')?.errors?.['pattern']">Please enter a valid phone number</span>
           </div>
         </div>
   
         <!-- Role Selection -->
         <div>
-          <label for="role" class="block text-sm font-medium text-gray-300 mb-2">
-            Account Type
-          </label>
+          <label for="role" class="block text-sm font-medium text-[#351243]">Account Type</label>
           <select
             id="role"
             name="role"
             formControlName="role"
-            class="appearance-none relative block w-full px-4 py-3 border border-gray-600 bg-gray-800 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 sm:text-sm transition-colors"
+            class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-[#351243] bg-white focus:outline-none focus:ring-[#351243] focus:border-[#351243] sm:text-sm"
           >
             <option [value]="userRoles.CUSTOMER">Customer</option>
             <option [value]="userRoles.AGENT">Agent</option>
-            <option [value]="userRoles.ADMIN">Admin</option>
           </select>
         </div>
   
         <!-- Password Fields -->
         <div>
-          <label for="password" class="block text-sm font-medium text-gray-300 mb-2">
-            Password
-          </label>
+          <label for="password" class="block text-sm font-medium text-[#351243]">Password</label>
           <input
             id="password"
             name="password"
             type="password"
             formControlName="password"
-            class="appearance-none relative block w-full px-4 py-3 border border-gray-600 bg-gray-800 text-white placeholder-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 sm:text-sm transition-colors"
+            autocomplete="new-password"
+            required
+            class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-[#86718e] focus:outline-none focus:ring-[#351243] focus:border-[#351243] sm:text-sm"
             placeholder="Enter your password"
+            [ngClass]="{'border-[#431216]': registerForm.get('password')?.invalid && registerForm.get('password')?.touched}"
           />
-          <div *ngIf="password?.invalid && password?.touched" class="mt-1 text-red-400 text-sm">
-            <span *ngIf="password?.errors?.['required']">Password is required</span>
-            <span *ngIf="password?.errors?.['minlength']">Password must be at least 6 characters</span>
+          <div *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched" class="text-[#431216] text-sm mt-1">
+            <span *ngIf="registerForm.get('password')?.errors?.['required']">Password is required</span>
+            <span *ngIf="registerForm.get('password')?.errors?.['minlength']">Password must be at least 6 characters</span>
           </div>
         </div>
   
         <div>
-          <label for="confirmPassword" class="block text-sm font-medium text-gray-300 mb-2">
-            Confirm Password
-          </label>
+          <label for="confirmPassword" class="block text-sm font-medium text-[#351243]">Confirm Password</label>
           <input
             id="confirmPassword"
             name="confirmPassword"
             type="password"
             formControlName="confirmPassword"
-            class="appearance-none relative block w-full px-4 py-3 border border-gray-600 bg-gray-800 text-white placeholder-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 sm:text-sm transition-colors"
+            autocomplete="new-password"
+            required
+            class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-[#86718e] focus:outline-none focus:ring-[#351243] focus:border-[#351243] sm:text-sm"
             placeholder="Confirm your password"
+            [ngClass]="{'border-[#431216]': registerForm.get('confirmPassword')?.invalid && registerForm.get('confirmPassword')?.touched}"
           />
-          <div *ngIf="confirmPassword?.invalid && confirmPassword?.touched" class="mt-1 text-red-400 text-sm">
-            <span *ngIf="confirmPassword?.errors?.['required']">Please confirm your password</span>
-            <span *ngIf="confirmPassword?.errors?.['passwordMismatch']">Passwords do not match</span>
+          <div *ngIf="registerForm.get('confirmPassword')?.invalid && registerForm.get('confirmPassword')?.touched" class="text-[#431216] text-sm mt-1">
+            <span *ngIf="registerForm.get('confirmPassword')?.errors?.['required']">Please confirm your password</span>
+            <span *ngIf="registerForm.get('confirmPassword')?.errors?.['passwordMismatch']">Passwords do not match</span>
           </div>
         </div>
   
-        <!-- Error Message -->
-        <div *ngIf="error" class="bg-red-900 border border-red-600 text-red-200 px-4 py-3 rounded-lg">
-          {{ error }}
-        </div>
-  
         <!-- Submit Button -->
-        <div class="pt-4">
+        <div>
           <button
             type="submit"
             [disabled]="registerForm.invalid || isLoading"
-            class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-105"
+            class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#351243] hover:bg-[#431216] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#86718e] transition-all duration-200"
+            [class.opacity-75]="isLoading"
           >
             <span *ngIf="!isLoading">Create Account</span>
             <span *ngIf="isLoading" class="flex items-center">
@@ -175,7 +164,14 @@
             </span>
           </button>
         </div>
+        <!-- <p class="mt-4 text-center text-sm text-[#86718e]">
+    Already have an account?
+     <a routerLink="/auth/login" class="font-medium text-[#351243] hover:text-[#86718e] transition-colors">
+    Sign in here
+      </a>
+      </p>
+        -->
+
       </form>
     </div>
   </div>
-  

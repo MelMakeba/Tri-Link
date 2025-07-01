@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Email Verification | Tri-Link Car Rentals</title>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+    </style>
+  </head>
+  <body style="font-family: 'Poppins', Arial, sans-serif; background: #f8f6fa; color: #351243; margin: 0; padding: 0;">
+    <div style="max-width: 600px; margin: 32px auto; background: #fff; border-radius: 16px; box-shadow: 0 4px 24px rgba(134, 113, 142, 0.2); overflow: hidden;">
+      <!-- Header with Branding -->
+      <div style="background: linear-gradient(90deg,#351243,#86718e); padding: 24px; text-align: center;">
+        <h1 style="color: white; margin: 0; font-size: 24px;">Tri-Link Car Rentals</h1>
+      </div>
+      
+      <!-- Content -->
+      <div style="padding: 32px;">
+        <h2 style="color: #351243; margin-top: 0;">Complete Your Registration</h2>
+        <p>Hello <strong><%= name %></strong>,</p>
+        <p>Thank you for registering with Tri-Link Car Rentals. To complete your registration and verify your email address, please click the button below:</p>
+        
+        <!-- Verification Button -->
+        <div style="text-align: center; margin: 32px 0;">
+          <a href="http://localhost:4200/auth/email-verification?token=<%= token %>" 
+             style="display: inline-block; background: linear-gradient(90deg,#351243,#86718e); color: #fff; padding: 12px 32px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 16px; box-shadow: 0 4px 12px rgba(134, 113, 142, 0.3);">
+            Verify Email Address
+          </a>
+        </div>
+        
+        <!-- Alternative Token Method -->
+        <div style="background: #f8f6fa; border-radius: 8px; padding: 16px; margin: 24px 0; font-size: 14px;">
+          <p style="margin-top: 0;">Or verify using this token:</p>
+          <div style="background: white; padding: 12px; border-radius: 4px; font-family: monospace; word-break: break-all;"><%= token %></div>
+          <p style="margin-bottom: 0;">Enter this token on the verification page at <a href="http://localhost:4200/auth/email-verification" style="color: #86718e;">http://localhost:4200/auth/email-verification</a></p>
+        </div>
+        
+        <p>If you didn't request this email, you can safely ignore it.</p>
+        
+        <div style="border-top: 1px solid #eee; margin-top: 32px; padding-top: 16px; color: #86718e; font-size: 14px;">
+          <p style="margin: 8px 0;">Happy travels,</p>
+          <p style="margin: 8px 0; font-weight: 600;">The Tri-Link Team</p>
+          <p style="margin: 8px 0;">
+            <a href="http://localhost:4200" style="color: #86718e; text-decoration: none;">Visit Our Website</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

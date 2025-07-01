@@ -1,0 +1,64 @@
+<div class="bg-white rounded-xl shadow-lg p-6">
+      <!-- Loading State -->
+      <div *ngIf="loading" class="flex justify-center items-center h-40">
+        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-[#351243]"></div>
+      </div>
+
+      <!-- Error State -->
+      <div *ngIf="error" class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4">
+        {{ error }}
+      </div>
+
+      <!-- Profile Content -->
+      <div *ngIf="!loading && user" class="flex items-center gap-6 mb-6">
+        <div class="relative">
+          <img 
+            [src]="user.avatar || '/assets/avatar-default.png'" 
+            [alt]="user.firstName + ' ' + user.lastName"
+            class="w-20 h-20 rounded-full object-cover border-4 border-[#86718e]"
+          />
+          <button 
+            *ngIf="canEdit"
+            (click)="showAvatarModal = true"
+            [disabled]="avatarUploading"
+            class="absolute -bottom-2 -right-2 bg-[#351243] text-white rounded-full p-2 hover:bg-[#431216] transition disabled:opacity-50">
+            <span *ngIf="!avatarUploading">📷</span>
+            <div *ngIf="avatarUploading" class="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+          </button>
+        </div>
+        
+        <div class="flex-1">
+          <h2 class="text-2xl font-bold text-[#351243]">
+            {{ user.firstName }} {{ user.lastName }}
+          </h2>
+          <p class="text-[#86718e] font-medium">{{ user.role | titlecase }}</p>
+          <p class="text-gray-600">{{ user.email }}</p>
+          <p class="text-sm text-gray-500" *ngIf="user.phone">{{ user.phone }}</p>
+        </div>
+        
+        <button 
+          *ngIf="canEdit"
+          (click)="showEditModal = true"
+          class="bg-gradient-to-r from-[#351243] to-[#86718e] text-white px-4 py-2 rounded-lg hover:from-[#431216] transition">
+          Edit Profile
+        </button>
+      </div>
+      
+      <!-- Role-specific content slot -->
+      <ng-content></ng-content>
+    </div>
+
+    <!-- Edit Profile Modal -->
+    <app-profile-edit
+      *ngIf="showEditModal && user"
+      [user]="user"
+      (save)="updateUserProfile($event)"
+      (cancel)="showEditModal = false">
+    </app-profile-edit>
+
+    <!-- Avatar Upload Modal -->
+    <app-avatar-upload
+      *ngIf="showAvatarModal"
+      (upload)="uploadUserAvatar($event)"
+      (cancel)="showAvatarModal = false">
+    </app-avatar-upload>

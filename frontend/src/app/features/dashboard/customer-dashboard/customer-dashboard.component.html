@@ -1,0 +1,124 @@
+<div class="flex min-h-screen bg-gradient-to-br from-[#86718e] via-white to-[#431216]">
+      <!-- Sidebar -->
+      <aside class="w-56 bg-[#351243] text-white flex flex-col py-8 px-4">
+        <div class="text-2xl font-bold mb-10">🚗 Tri-Link</div>
+        <nav class="flex flex-col gap-4">
+          <a 
+            routerLink="/dashboard/customer"
+            routerLinkActive="bg-[#86718e] text-[#351243]"
+            class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-[#86718e] transition font-medium"
+            [routerLinkActiveOptions]="{ exact: true }"
+          >
+            <span>🏠</span> Dashboard
+          </a>
+          <a 
+            routerLink="/bookings"
+            routerLinkActive="bg-[#86718e] text-[#351243]"
+            class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-[#86718e] transition font-medium"
+          >
+            <span>📅</span> My Bookings
+          </a>
+          <a 
+            routerLink="/profile"
+            routerLinkActive="bg-[#86718e] text-[#351243]"
+            class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-[#86718e] transition font-medium"
+          >
+            <span>👤</span> Profile
+          </a>
+          <a 
+            routerLink="/support"
+            routerLinkActive="bg-[#86718e] text-[#351243]"
+            class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-[#86718e] transition font-medium"
+          >
+            <span>💬</span> Support
+          </a>
+        </nav>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="flex-1 p-8">
+        <!-- Header -->
+        <div class="flex justify-between items-center mb-8">
+          <div>
+            <h2 class="text-2xl font-bold text-[#351243]">
+              Good Morning, 
+              <span class="text-[#431216]">{{ currentUser?.firstName || 'Customer' }}</span>
+            </h2>
+            <div class="text-[#86718e]">{{ today | date:'fullDate' }}</div>
+          </div>
+          <div class="w-12 h-12 rounded-full border-2 border-[#86718e] overflow-hidden">
+            <img 
+              [src]="currentUser?.avatar || '/assets/avatar-default.png'" 
+              alt="Avatar" 
+              class="w-full h-full object-cover" 
+            />
+          </div>
+        </div>
+
+        <!-- Stats Widgets -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+          <div class="bg-white rounded-xl shadow-lg p-6 text-center">
+            <h3 class="text-[#86718e] font-semibold mb-2">Active Bookings</h3>
+            <div class="text-3xl font-bold text-[#351243]">{{ activeBookings }}</div>
+          </div>
+          <div class="bg-white rounded-xl shadow-lg p-6 text-center">
+            <h3 class="text-[#86718e] font-semibold mb-2">Loyalty Points</h3>
+            <div class="text-3xl font-bold text-[#351243]">{{ loyaltyPoints }}</div>
+          </div>
+          <div class="bg-white rounded-xl shadow-lg p-6 text-center">
+            <h3 class="text-[#86718e] font-semibold mb-2">Past Bookings</h3>
+            <div class="text-3xl font-bold text-[#351243]">{{ pastBookings }}</div>
+          </div>
+          <div class="bg-white rounded-xl shadow-lg p-6 text-center">
+            <h3 class="text-[#86718e] font-semibold mb-2">Offers</h3>
+            <div class="text-3xl font-bold text-[#351243]">{{ offers.length }}</div>
+          </div>
+        </div>        
+
+        <!-- Booking Activity Chart -->
+        <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+          <h3 class="text-lg font-semibold text-[#351243] mb-4">Booking Activity</h3>
+          <canvas 
+            baseChart
+            [data]="bookingChartData"
+            [type]="chartType"
+            [options]="bookingChartOptions">
+          </canvas>
+        </div>
+
+        <!-- Calendar & Quick Actions -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="bg-white rounded-xl shadow-lg p-6">
+            <h3 class="text-lg font-semibold text-[#351243] mb-4">Calendar</h3>
+            <!-- Replace with your calendar component -->
+            <app-calendar></app-calendar>
+          </div>
+          <div class="bg-white rounded-xl shadow-lg p-6">
+            <h3 class="text-lg font-semibold text-[#351243] mb-4">Quick Actions</h3>
+            <ul class="space-y-4">
+              <li>
+                <button 
+                  (click)="bookCar()" 
+                  class="w-full bg-gradient-to-r from-[#351243] to-[#86718e] text-white py-2 rounded-lg font-semibold shadow hover:from-[#431216] transition">
+                  Book a Car
+                </button>
+              </li>
+              <li>
+                <button 
+                  (click)="requestSupport()" 
+                  class="w-full bg-gradient-to-r from-[#351243] to-[#86718e] text-white py-2 rounded-lg font-semibold shadow hover:from-[#431216] transition">
+                  Request Support
+                </button>
+              </li>
+              <li>
+                <button 
+                  (click)="viewOffers()" 
+                  class="w-full bg-gradient-to-r from-[#351243] to-[#86718e] text-white py-2 rounded-lg font-semibold shadow hover:from-[#431216] transition">
+                  View Offers
+                </button>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </main>
+    </div>

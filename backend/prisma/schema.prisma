@@ -72,6 +72,11 @@ model User {
   vehicles Vehicle[]
   payments Payment[]
 
+  // Add these relation fields:
+  disputesAsComplainant Dispute[] @relation("DisputeComplainant")
+  disputesAsRespondent  Dispute[] @relation("DisputeRespondent")
+  disputesAssignedTo    Dispute[] @relation("DisputeAssignedTo")
+
   @@map("users")
   @@index([email])
 }
@@ -104,6 +109,8 @@ model Vehicle {
   location    String?
   city        String?
   country     String?
+  availableFrom DateTime?
+  availableTo DateTime?
  agentId    String?
   agent      User?    @relation(fields: [agentId], references: [id])
   bookings    Booking[]
@@ -197,4 +204,99 @@ model Cuopon {
   updatedAt   DateTime @updatedAt
 
   @@map("coupons")
+}
+
+model Dispute {
+  id          String   @id @default(uuid())
+  
+  // Basic dispute information
+  title       String
+  description String
+  category    DisputeCategory
+  priority    DisputePriority @default(MEDIUM)
+  status      DisputeStatus   @default(PENDING)
+  
+  // Resolution information
+  resolution     String?
+  resolvedAt     DateTime?
+  resolvedBy     String?   // User ID or admin who resolved it
+  
+  // Parties involved
+  complainantId  String    // User who filed the dispute
+  respondentId   String?   // User being disputed against (optional)
+  assignedToId   String?   // Admin/moderator assigned to handle
+  
+  // Related entities (optional - customize based on your needs)
+  orderId        String?   // If dispute is related to an order
+  transactionId  String?   // If dispute is related to a transaction
+  productId      String?   // If dispute is related to a product
+  
+  // Metadata
+  tags           String[]  // Array of tags for categorization
+  evidence       Json?     // Store evidence files, links, etc.
+  
+  // Timestamps
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relations (uncomment and modify based on your existing models)
+  complainant User     @relation("DisputeComplainant", fields: [complainantId], references: [id])
+  respondent  User?    @relation("DisputeRespondent", fields: [respondentId], references: [id])
+  assignedTo  User?    @relation("DisputeAssignedTo", fields: [assignedToId], references: [id])
+  
+  
+  
+  // Comments/Messages related to the dispute
+  comments DisputeComment[]
+  
+  @@map("disputes")
+}
+
+model DisputeComment {
+  id        String   @id @default(uuid())
+  disputeId String
+  authorId  String
+  content   String
+  isInternal Boolean @default(false) // Internal admin notes vs public comments
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  dispute   Dispute @relation(fields: [disputeId], references: [id], onDelete: Cascade)
+  // author    User    @relation(fields: [authorId], references: [id])
+  
+  @@map("dispute_comments")
+}
+
+enum DisputeStatus {
+  PENDING
+  IN_PROGRESS
+  UNDER_REVIEW
+  RESOLVED
+  CLOSED
+  ESCALATED
+  CANCELLED
+}
+
+enum DisputeCategory {
+  PAYMENT
+  DELIVERY
+  QUALITY
+  REFUND
+  BILLING
+  SERVICE
+  ACCOUNT
+  TECHNICAL
+  PRIVACY
+  HARASSMENT
+  FRAUD
+  OTHER
+}
+
+enum DisputePriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+  CRITICAL
 }

@@ -1,0 +1,39 @@
+@baseurl = http://localhost:3000
+@contentType = application/json
+
+@userToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkNjliMjYyYi04YTJkLTQ3MjYtOWUxYy1hYjdiZDA4N2YzNWYiLCJlbWFpbCI6Im1lbGsuaWxlbmEuYUBnbWFpbC5jb20iLCJyb2xlIjoiQUdFTlQiLCJpYXQiOjE3NTEyMzU1NTAsImV4cCI6MTc1MTIzOTE1MH0.6oFPylPwZa5hm0QJ_vpUEk6mcRWPte-MTqXe5CNJ2SQ
+
+### Get User Profile (Protected)
+GET {{baseurl}}/user/profile
+Authorization: Bearer {{userToken}}
+Content-Type: application/json
+
+### Update User Profile (Protected)
+PATCH {{baseurl}}/user/profile
+Authorization: Bearer {{userToken}}
+Content-Type: application/json
+
+{
+  "firstName": "Melissa",
+  "lastName": "Waititu",
+  "email": "melk.ilena.a@gmail.com",
+  "phone": "+254712345858",
+  "dateOfBirth": "1995-05-10",
+  "address": "123 Main St",
+  "city": "Nairobi",
+  "country": "Kenya",
+  "isVerified": true,
+  "isActive": true
+}
+
+### Update User Profile Image (Protected)
+PATCH {{baseurl}}/user/profile/image
+Authorization: Bearer {{userToken}}
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="file"; filename="avatar.jpg"
+Content-Type: image/jpeg
+
+< /home/user/Documents/MelProjects/blue-circle-with-white-user/307ce493-b254-4b2d-8ba4-d12c080d6651.jpg
+------WebKitFormBoundary7MA4YWxkTrZu0gW--

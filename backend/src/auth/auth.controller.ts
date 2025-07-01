@@ -13,7 +13,7 @@ import { LoginDto } from './dto/login.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
-import { JwtAuthGuard } from './guards/jwt-auth.gaurd';
+import { AuthGuard } from './guards/auth-guard';
 
 @Controller('auth')
 export class AuthController {
@@ -29,7 +29,7 @@ export class AuthController {
     return this.authService.login(loginDto);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(AuthGuard)
   @Post('change-password')
   async changePassword(
     @Request() req: Request & { user: { id: string } },
@@ -53,9 +53,10 @@ export class AuthController {
     return this.authService.verifyEmail(token);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get('profile')
+  @UseGuards(AuthGuard)
   async getProfile(@Request() req: Request & { user: { id: string } }) {
+    console.log('req.user:', req.user);
     return this.authService.getProfile(req.user.id);
   }
 }

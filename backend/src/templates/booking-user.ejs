@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Your Booking Details</title>
+  </head>
+  <body style="font-family: Arial, sans-serif; background: #f8f6fa; color: #351243; padding: 32px;">
+    <div style="max-width: 520px; margin: auto; background: #fff; border-radius: 16px; box-shadow: 0 4px 24px #86718e33; padding: 32px;">
+      <h2 style="color: #351243;">Booking Confirmed!</h2>
+      <p>Hi <b><%= name %></b>,</p>
+      <p>Your booking for <b><%= car %></b> is confirmed.</p>
+      <ul style="color: #431216;">
+        <li><b>Booking Date:</b> <%= bookingDate %></li>
+        <li><b>Rental Period:</b> <%= startDate %> to <%= endDate %></li>
+        <li><b>Total Price:</b> $<%= price %></li>
+      </ul>
+      <p>Thank you for choosing Tri-Link Car Rentals!</p>
+      <p style="color: #86718e;">Tri-Link Car Rentals</p>
+    </div>
+  </body>
+</html>

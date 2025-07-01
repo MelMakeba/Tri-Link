@@ -1,0 +1,154 @@
+<div class="flex min-h-screen bg-gradient-to-br from-[#86718e] via-white to-[#431216]">
+  <!-- Sidebar -->
+  <aside class="w-56 bg-[#351243] text-white flex flex-col py-8 px-4">
+    <div class="text-2xl font-bold mb-10">🚗 Tri-Link</div>
+    <nav class="flex flex-col gap-4">
+      <a routerLink="/admin/dashboard" routerLinkActive="bg-[#86718e] text-[#351243]" class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-[#86718e] transition font-medium" [routerLinkActiveOptions]="{ exact: true }">
+        <span>🏠</span> Dashboard
+      </a>
+      <a routerLink="/admin/users" routerLinkActive="bg-[#86718e] text-[#351243]" class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-[#86718e] transition font-medium">
+        <span>👥</span> Users
+      </a>
+      <a routerLink="/admin/bookings" routerLinkActive="bg-[#86718e] text-[#351243]" class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-[#86718e] transition font-medium">
+        <span>📅</span> Bookings
+      </a>
+      <a routerLink="/admin/cars" routerLinkActive="bg-[#86718e] text-[#351243]" class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-[#86718e] transition font-medium">
+        <span>🚙</span> Vehicles
+      </a>
+    </nav>
+    <!-- Logout Button -->
+    <div class="mt-auto pt-8 border-t border-[#86718e]">
+      <button 
+        (click)="logout()" 
+        class="w-full bg-red-600 text-white py-2 rounded-lg font-semibold shadow hover:bg-red-700 transition mt-4"
+      >
+        <span>🚪</span> Logout
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="flex-1 p-8">
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-8">
+      <div>
+        <h2 class="text-2xl font-bold text-[#351243]">Welcome, <span class="text-[#431216]">{{ currentUser?.firstName }}</span></h2>
+        <div class="text-[#86718e]">{{ today | date:'fullDate' }}</div>
+      </div>
+      <div class="flex items-center gap-4">
+        <!-- Refresh Button -->
+        <!-- <button 
+          (click)="refreshData()" 
+          [disabled]="isLoading"
+          class="px-4 py-2 bg-[#351243] text-white rounded-lg hover:bg-[#431216] transition disabled:opacity-50">
+          <span *ngIf="!isLoading">🔄 Refresh</span>
+          <span *ngIf="isLoading">⏳ Loading...</span>
+        </button> -->
+        <div class="w-12 h-12 rounded-full border-2 border-[#86718e] overflow-hidden">
+          <img [src]="currentUser?.avatar || '/assets/avatar-default.png'" alt="Avatar" class="w-full h-full object-cover" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Error Message -->
+    <div *ngIf="error" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
+      <div class="flex items-center">
+        <span class="mr-2">⚠️</span>
+        <span>{{ error }}</span>
+        <button (click)="refreshData()" class="ml-auto text-red-800 hover:text-red-900">
+          Try Again
+        </button>
+      </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div *ngIf="isLoading" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div class="bg-white p-6 rounded-lg shadow-lg">
+        <div class="flex items-center gap-3">
+          <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-[#351243]"></div>
+          <span class="text-[#351243] font-medium">Loading dashboard data...</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats Widgets -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+      <div class="bg-white rounded-xl shadow-lg p-6 text-center">
+        <h3 class="text-[#86718e] font-semibold mb-2">Total Users</h3>
+        <div class="text-3xl font-bold text-[#351243]">{{ totalUsers }}</div>
+      </div>
+      <div class="bg-white rounded-xl shadow-lg p-6 text-center">
+        <h3 class="text-[#86718e] font-semibold mb-2">Admins</h3>
+        <div class="text-3xl font-bold text-[#351243]">{{ totalUsers - totalAgents - totalCustomers }}</div>
+      </div>
+      <div class="bg-white rounded-xl shadow-lg p-6 text-center">
+        <h3 class="text-[#86718e] font-semibold mb-2">Agents</h3>
+        <div class="text-3xl font-bold text-[#351243]">{{ totalAgents }}</div>
+      </div>
+      <div class="bg-white rounded-xl shadow-lg p-6 text-center">
+        <h3 class="text-[#86718e] font-semibold mb-2">Customers</h3>
+        <div class="text-3xl font-bold text-[#351243]">{{ totalCustomers }}</div>
+      </div>
+      <div class="bg-white rounded-xl shadow-lg p-6 text-center">
+        <h3 class="text-[#86718e] font-semibold mb-2">Notifications</h3>
+        <div class="text-3xl font-bold text-[#351243]">{{ notificationCount }}</div>
+      </div>
+    </div>
+
+    <!-- Recent Registrations & Quick Actions -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="bg-white rounded-xl shadow-lg p-6">
+        <h3 class="text-lg font-semibold text-[#351243] mb-4">Recent Registrations</h3>
+        
+        <!-- Loading state for recent users -->
+        <div *ngIf="isLoading" class="flex items-center justify-center h-48">
+          <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-[#351243]"></div>
+        </div>
+        
+        <!-- Recent users list -->
+        <div *ngIf="!isLoading" class="max-h-48 overflow-y-auto">
+          <ul *ngIf="recentUsers.length > 0" class="space-y-2">
+            <li *ngFor="let user of recentUsers" class="bg-[#86718e22] rounded p-3 text-[#351243]">
+              <div class="flex justify-between items-center">
+                <span class="font-semibold">{{ user.firstName }} {{ user.lastName }}</span>
+                <span class="text-sm bg-[#351243] text-white px-2 py-1 rounded">
+                  {{ formatUserRole(user.role) }}
+                </span>
+              </div>
+              <div *ngIf="user.createdAt" class="text-xs text-[#86718e] mt-1">
+                {{ user.createdAt | date:'short' }}
+              </div>
+            </li>
+          </ul>
+          
+          <!-- Empty state -->
+          <div *ngIf="recentUsers.length === 0" class="text-center py-8 text-[#86718e]">
+            <span>📋</span>
+            <p class="mt-2">No recent registrations</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="bg-white rounded-xl shadow-lg p-6">
+        <h3 class="text-lg font-semibold text-[#351243] mb-4">Quick Actions</h3>
+        <ul class="space-y-4">
+          <li>
+            <button (click)="addUser()" class="w-full bg-gradient-to-r from-[#351243] to-[#86718e] text-white py-2 rounded-lg font-semibold shadow hover:from-[#431216] transition">
+              ➕ Add User
+            </button>
+          </li>
+          <li>
+            <button (click)="manageRoles()" class="w-full bg-gradient-to-r from-[#351243] to-[#86718e] text-white py-2 rounded-lg font-semibold shadow hover:from-[#431216] transition">
+              👤 Manage Roles
+            </button>
+          </li>
+          <li>
+            <button (click)="viewLogs()" class="w-full bg-gradient-to-r from-[#351243] to-[#86718e] text-white py-2 rounded-lg font-semibold shadow hover:from-[#431216] transition">
+              📊 View Logs
+            </button>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </main>
+</div>
