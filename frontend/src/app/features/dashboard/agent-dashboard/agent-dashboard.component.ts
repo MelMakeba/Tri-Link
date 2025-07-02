@@ -5,7 +5,7 @@ import { ChartConfiguration, ChartData, ChartType } from 'chart.js';
 import { UserProfileService } from '../../../core/services/user-profile.service';
 import { User } from '../../../core/models/user.model';
 import { AgentVehicleService } from '../../../core/services/vehicle.service';
-import { BookingService } from '../../../core/services/bookings.servicee';
+import { BookingService } from '../../../core/services/booking.service';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 
@@ -92,7 +92,7 @@ export class AgentDashboardComponent implements OnInit {
   ngOnInit(): void {
     this.loadProfile();
     this.loadVehicles();
-    this.loadBookings();
+    // this.loadBookings();
     this.loadRating();
   }
 
@@ -118,14 +118,14 @@ export class AgentDashboardComponent implements OnInit {
     });
   }
 
-  loadBookings() {
-    // Replace with your actual bookings service if needed
-    this.bookingService.getCustomerBookings?.().subscribe({
-      next: (res) => {
-        this.totalBookings = res?.data?.length || res?.length || 0;
-      }
-    });
-  }
+  // loadBookings() {
+  //   // Replace with your actual bookings service if needed
+  //   this.bookingService.getCustomerBookings?.().subscribe({
+  //     next: (res) => {
+  //       this.totalBookings = res?.data?.length || res?.length || 0;
+  //     }
+  //   });
+  // }
 
   loadRating() {
     // Replace with your actual rating logic/service

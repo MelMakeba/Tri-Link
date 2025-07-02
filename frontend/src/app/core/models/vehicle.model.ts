@@ -35,3 +35,36 @@ export interface Vehicle {
   // bookings?: Booking[]; // Uncomment and import Booking if needed
   // reviews?: Review[];   // Uncomment and import Review if needed
 }
+
+// Create this interface to match your API response structure
+export interface VehicleApiResponse {
+  success: boolean;
+  message: string;
+  data: {
+    vehicles: VehicleFromApi[];
+    count: number;
+  };
+  statusCode: number;
+  timestamp: string;
+}
+
+// Create a separate interface for the vehicle data from API
+export interface VehicleFromApi {
+  id: string;
+  make: string;
+  model: string;
+  year: number;
+  category: string;
+  transmission: string;
+  fuelType: string;
+  seats: number;
+  pricePerDay: number;
+  location: string | null;
+  description: string | null;
+  hasAC: boolean;
+  hasGPS: boolean;
+  hasBluetooth: boolean;
+  hasUSB: boolean;
+  agent: string | null;
+  images: string[];
+}

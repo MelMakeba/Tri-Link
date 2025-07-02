@@ -1,1 +1,123 @@
-<p>date-time-selection works!</p>
+<div class="p-6">
+  <h2 class="text-2xl font-bold text-[#351243] mb-6">Select Rental Dates</h2>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+    <!-- Date & Time Form -->
+    <div class="md:col-span-2">
+      <form [formGroup]="dateForm" class="space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Start Date -->
+          <div>
+            <label for="startDate" class="block text-sm font-medium text-gray-700 mb-1">Pick-up Date</label>
+            <input 
+              type="date" 
+              id="startDate"
+              formControlName="startDate"
+              [min]="minDate"
+              [max]="maxDate"
+              class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#86718e]">
+          </div>
+          
+          <!-- End Date -->
+          <div>
+            <label for="endDate" class="block text-sm font-medium text-gray-700 mb-1">Return Date</label>
+            <input 
+              type="date" 
+              id="endDate"
+              formControlName="endDate"
+              [min]="dateForm.get('startDate')?.value || minDate"
+              [max]="maxDate"
+              class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#86718e]">
+            <div *ngIf="dateForm.get('endDate')?.hasError('invalidRange')" class="text-red-600 text-xs mt-1">
+              End date must be after start date
+            </div>
+          </div>
+          
+          <!-- Start Time -->
+          <div>
+            <label for="startTime" class="block text-sm font-medium text-gray-700 mb-1">Pick-up Time</label>
+            <select 
+              id="startTime"
+              formControlName="startTime"
+              class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#86718e]">
+              <option *ngFor="let time of availableStartTimes" [value]="time">{{ time }}</option>
+            </select>
+          </div>
+          
+          <!-- End Time -->
+          <div>
+            <label for="endTime" class="block text-sm font-medium text-gray-700 mb-1">Return Time</label>
+            <select 
+              id="endTime"
+              formControlName="endTime"
+              class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#86718e]">
+              <option *ngFor="let time of availableEndTimes" [value]="time">{{ time }}</option>
+            </select>
+          </div>
+        </div>
+      </form>
+      
+      <!-- Rental Terms -->
+      <div class="mt-8 bg-gray-50 p-4 rounded-lg">
+        <h3 class="font-medium text-[#351243] mb-2">Rental Terms</h3>
+        <ul class="text-sm text-gray-600 space-y-2">
+          <li class="flex items-start">
+            <span class="material-icons text-green-500 mr-2 text-sm"></span>
+            <span>Free cancellation up to 24 hours before pick-up</span>
+          </li>
+          <li class="flex items-start">
+            <span class="material-icons text-green-500 mr-2 text-sm"></span>
+            <span>Unlimited mileage included</span>
+          </li>
+          <li class="flex items-start">
+            <span class="material-icons text-green-500 mr-2 text-sm"></span>
+            <span>Valid driver's license required</span>
+          </li>
+          <li class="flex items-start">
+            <span class="material-icons text-green-500 mr-2 text-sm"></span>
+            <span>Basic insurance included</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+    
+    <!-- Summary -->
+    <div class="md:col-span-1">
+      <div class="bg-gray-50 p-4 rounded-lg">
+        <h3 class="font-medium text-[#351243] mb-4">Rental Summary</h3>
+        
+        <div class="space-y-3">
+          <div class="flex justify-between items-center text-sm">
+            <span class="text-gray-600">Days:</span>
+            <span class="font-medium">{{ numberOfDays }}</span>
+          </div>
+          
+          <div class="flex justify-between items-center text-sm">
+            <span class="text-gray-600">Price per day:</span>
+            <span class="font-medium">${{ pricePerDay }}</span>
+          </div>
+          
+          <div class="pt-3 border-t border-gray-200 flex justify-between items-center">
+            <span class="text-gray-800 font-medium">Total:</span>
+            <span class="text-lg font-bold text-[#431216]">${{ totalPrice }}</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="mt-4 bg-blue-50 p-4 rounded-lg text-sm text-blue-700">
+        <div class="flex items-start">
+          <span class="material-icons text-blue-500 mr-2 text-sm">info</span>
+          <p>Your payment details will be collected later in the booking process.</p>
+        </div>
+      </div>
+      
+      <button 
+        (click)="saveAndContinue()"
+        [disabled]="dateForm.invalid"
+        class="mt-6 w-full px-4 py-3 bg-gradient-to-r from-[#86718e] to-[#351243] text-white rounded-lg hover:from-[#351243] hover:to-[#431216] transition flex items-center justify-center font-medium">
+        Save and Continue
+        <span class="material-icons ml-1 text-sm"> >> </span>
+      </button>
+    </div>
+  </div>
+</div>

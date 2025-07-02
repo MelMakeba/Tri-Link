@@ -1,1 +1,206 @@
-<p>booking-confirmation works!</p>
+<div class="p-6">
+  <div class="max-w-4xl mx-auto">
+    <!-- Success Header -->
+    <div class="text-center mb-8">
+      <div class="flex justify-center items-center">
+        <div class="bg-green-100 rounded-full p-3">
+          <span class="material-icons text-green-500 text-4xl">check_circle</span>
+        </div>
+      </div>
+      <h2 class="text-2xl font-bold text-[#351243] mt-4">Booking Confirmed!</h2>
+      <p class="text-gray-600 mt-2">Thank you for your booking with Tri-Link Car Rentals.</p>
+    </div>
+    
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="flex justify-center items-center py-8">
+      <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#351243]"></div>
+    </div>
+    
+    <!-- Error State -->
+    <div *ngIf="error" class="bg-red-50 p-4 rounded-lg text-red-700 mb-6">
+      <p>{{ error }}</p>
+      <button 
+        (click)="newBooking()" 
+        class="mt-4 px-4 py-2 bg-red-100 text-red-700 rounded hover:bg-red-200 transition">
+        Start a New Booking
+      </button>
+    </div>
+    
+    <!-- Confirmation Details -->
+    <div *ngIf="!isLoading && !error && (booking || bookingStateService.currentState)" class="bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden">
+      <!-- Confirmation Header -->
+      <div class="bg-[#351243] text-white p-6">
+        <div class="flex justify-between items-center">
+          <div>
+            <h3 class="text-xl font-bold">Booking Confirmation</h3>
+            <p class="text-sm opacity-80">Booking #: {{ bookingId || 'Pending' }}</p>
+          </div>
+          <div class="flex space-x-2">
+            <button 
+              (click)="printConfirmation()" 
+              class="p-2 bg-white/20 rounded-full hover:bg-white/30 transition" 
+              title="Print">
+              <span class="material-icons text-sm">print</span>
+            </button>
+            <button 
+              (click)="downloadPdf()" 
+              class="p-2 bg-white/20 rounded-full hover:bg-white/30 transition" 
+              title="Download PDF">
+              <span class="material-icons text-sm">download</span>
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Booking Details -->
+      <div class="p-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Vehicle Information -->
+          <div>
+            <h4 class="text-sm uppercase text-gray-500 font-medium mb-2">Vehicle Information</h4>
+            <div class="bg-gray-50 rounded-lg p-4">
+              <ng-container *ngIf="booking?.vehicle || bookingStateService.currentState.selectedVehicle as vehicle">
+                <div class="flex items-start">
+                  <img 
+                    *ngIf="vehicle?.images && vehicle?.images?.length" 
+                    [src]="vehicle.images[0]"
+                    class="w-20 h-20 object-cover rounded mr-4" 
+                    alt="{{ vehicle.make }} {{ vehicle.model }}">
+                  <div>
+                    <p class="font-semibold text-[#351243]">{{ vehicle.make }} {{ vehicle.model }}</p>
+                    <p class="text-sm text-gray-600">{{ vehicle.year }} • {{ vehicle.category }}</p>
+                    <div class="mt-1 flex items-center text-sm">
+                      <span class="material-icons text-gray-400 text-xs mr-1">people</span>
+                      <span class="text-gray-600">{{ vehicle.seats }} seats</span>
+                      <span class="mx-2 text-gray-300">|</span>
+                      <span class="material-icons text-gray-400 text-xs mr-1">settings</span>
+                      <span class="text-gray-600">{{ vehicle.transmission }}</span>
+                    </div>
+                  </div>
+                </div>
+              </ng-container>
+            </div>
+          </div>
+          
+          <!-- Rental Period -->
+          <div>
+            <h4 class="text-sm uppercase text-gray-500 font-medium mb-2">Rental Period</h4>
+            <div class="bg-gray-50 rounded-lg p-4">
+              <ng-container *ngIf="booking || bookingStateService.currentState as state">
+                <div class="grid grid-cols-2 gap-4">
+                  <div>
+                    <p class="text-sm text-gray-500">Pick-up Date</p>
+                    <p class="font-medium text-[#351243]">
+                      {{ (booking?.startDate || state.startDate) | date:'MMM d, y' }}
+                    </p>
+                    <p class="text-sm text-gray-500">
+                      {{ booking?.startTime || state.startTime }}
+                    </p>
+                  </div>
+                  <div>
+                    <p class="text-sm text-gray-500">Return Date</p>
+                    <p class="font-medium text-[#351243]">
+                      {{ (booking?.endDate || state.endDate) | date:'MMM d, y' }}
+                    </p>
+                    <p class="text-sm text-gray-500">
+                      {{ booking?.endTime || state.endTime }}
+                    </p>
+                  </div>
+                </div>
+              </ng-container>
+            </div>
+          </div>
+          
+          <!-- Locations -->
+          <div>
+            <h4 class="text-sm uppercase text-gray-500 font-medium mb-2">Locations</h4>
+            <div class="bg-gray-50 rounded-lg p-4">
+              <ng-container *ngIf="booking || bookingStateService.currentState as state">
+                <div class="space-y-3">
+                  <div>
+                    <p class="text-sm text-gray-500">Pick-up Location</p>
+                    <p class="font-medium text-[#351243]">
+                      {{ booking?.pickupLocation || state.pickupLocation }}
+                    </p>
+                  </div>
+                  <div>
+                    <p class="text-sm text-gray-500">Return Location</p>
+                    <p class="font-medium text-[#351243]">
+                      {{ booking?.returnLocation || state.returnLocation }}
+                    </p>
+                  </div>
+                </div>
+              </ng-container>
+            </div>
+          </div>
+          
+          <!-- Payment Details -->
+          <div>
+            <h4 class="text-sm uppercase text-gray-500 font-medium mb-2">Payment Details</h4>
+            <div class="bg-gray-50 rounded-lg p-4">
+              <ng-container *ngIf="booking || bookingStateService.currentState as state">
+                <div class="space-y-2">
+                  <div class="flex justify-between">
+                    <p class="text-gray-600">Rental Total:</p>
+                    <p class="font-medium">${{ booking?.totalAmount || state.totalPrice }}</p>
+                  </div>
+                  
+                  <div *ngIf="(booking?.discountAmount || state.discountPrice) > 0" class="flex justify-between text-green-600">
+                    <p>Discount:</p>
+                    <p class="font-medium">-${{ booking?.discountAmount || state.discountPrice }}</p>
+                  </div>
+                  
+                  <div class="flex justify-between pt-2 border-t border-gray-200">
+                    <p class="font-medium text-gray-800">Final Price:</p>
+                    <p class="font-bold text-[#431216]">${{ booking?.finalAmount || state.finalPrice }}</p>
+                  </div>
+                  
+                  <div class="pt-2 mt-2 border-t border-gray-200">
+                    <p class="text-sm text-gray-500">Payment Status</p>
+                    <p class="font-medium text-green-600">Paid</p>
+                  </div>
+                </div>
+              </ng-container>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Additional Information -->
+        <div class="mt-6 bg-blue-50 p-4 rounded-lg">
+          <h4 class="font-medium text-blue-800 mb-2">Important Information</h4>
+          <ul class="text-sm text-blue-700 space-y-1">
+            <li class="flex items-start">
+              <span class="material-icons text-blue-500 mr-2 text-sm">info</span>
+              <span>Please arrive on time for your pick-up with your driver's license and the payment card used for this booking.</span>
+            </li>
+            <li class="flex items-start">
+              <span class="material-icons text-blue-500 mr-2 text-sm">info</span>
+              <span>You can cancel or modify this booking up to 24 hours before the pick-up time.</span>
+            </li>
+            <li class="flex items-start">
+              <span class="material-icons text-blue-500 mr-2 text-sm">info</span>
+              <span>A confirmation email has been sent to your registered email address.</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+      
+      <!-- Footer Buttons -->
+      <div class="bg-gray-50 p-6 flex flex-col md:flex-row space-y-3 md:space-y-0 md:space-x-3">
+        <button 
+          (click)="viewBookings()"
+          class="flex-1 px-4 py-3 bg-gradient-to-r from-[#86718e] to-[#351243] text-white rounded-lg hover:from-[#351243] hover:to-[#431216] transition flex items-center justify-center font-medium">
+          View My Bookings
+          <span class="material-icons ml-1 text-sm">list</span>
+        </button>
+        
+        <button 
+          (click)="newBooking()"
+          class="flex-1 px-4 py-3 bg-gray-200 text-[#351243] rounded-lg hover:bg-gray-300 transition flex items-center justify-center font-medium">
+          Book Another Vehicle
+          <span class="material-icons ml-1 text-sm">add</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

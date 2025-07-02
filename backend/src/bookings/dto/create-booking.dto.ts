@@ -1,18 +1,12 @@
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import {
-  IsDate,
-  IsString,
-  IsOptional,
-  IsNumber,
-  IsUUID,
+  IsDateString,
   IsNotEmpty,
-  MinDate,
-  ValidateIf,
-  Min,
+  IsOptional,
+  IsString,
+  IsUUID,
+  IsNumber,
 } from 'class-validator';
-import { Type, Transform } from 'class-transformer';
+import { Type } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class CreateBookingDto {
@@ -20,7 +14,6 @@ export class CreateBookingDto {
     description: 'ID of the vehicle to book',
     example: '123e4567-e89b-12d3-a456-426614174000',
   })
-  @IsString()
   @IsNotEmpty()
   @IsUUID()
   vehicleId: string;
@@ -30,11 +23,8 @@ export class CreateBookingDto {
     example: '2024-07-01T00:00:00.000Z',
     type: Date,
   })
-  @IsDate()
-  @Type(() => Date)
-  @MinDate(new Date(), {
-    message: 'Start date must be in the future',
-  })
+  @IsNotEmpty()
+  @IsDateString()
   startDate: Date;
 
   @ApiProperty({
@@ -42,16 +32,8 @@ export class CreateBookingDto {
     example: '2024-07-05T00:00:00.000Z',
     type: Date,
   })
-  @IsDate()
-  @Type(() => Date)
-  @ValidateIf((obj) => obj.startDate)
-  @Transform(({ value, obj }) => {
-    // Ensure end date is after start date
-    if (obj.startDate && new Date(value) <= new Date(obj.startDate)) {
-      throw new Error('End date must be after start date');
-    }
-    return value;
-  })
+  @IsNotEmpty()
+  @IsDateString()
   endDate: Date;
 
   @ApiProperty({
@@ -59,57 +41,57 @@ export class CreateBookingDto {
     example: '2024-07-01T09:00:00.000Z',
     type: Date,
   })
-  @IsDate()
-  @Type(() => Date)
-  startTime: Date;
+  @IsOptional()
+  @IsString()
+  startTime?: string;
 
   @ApiProperty({
     description: 'Booking end time',
     example: '2024-07-05T17:00:00.000Z',
     type: Date,
   })
-  @IsDate()
-  @Type(() => Date)
-  endTime: Date;
+  @IsOptional()
+  @IsString()
+  endTime?: string;
 
   @ApiProperty({
     description: 'Vehicle pickup location',
     example: 'Downtown Office - 123 Main St',
   })
-  @IsString()
   @IsNotEmpty()
+  @IsString()
   pickupLocation: string;
 
   @ApiProperty({
     description: 'Vehicle return location',
     example: 'Downtown Office - 123 Main St',
   })
-  @IsString()
   @IsNotEmpty()
+  @IsString()
   returnLocation: string;
 
   @ApiPropertyOptional({
     description: 'Additional notes for the booking',
     example: 'Please have the car ready by 9 AM',
   })
-  @IsString()
   @IsOptional()
+  @IsString()
   notes?: string;
 
   @ApiPropertyOptional({
     description: 'Driver license number',
     example: 'DL123456789',
   })
-  @IsString()
   @IsOptional()
+  @IsString()
   driverLicenseNumber?: string;
 
   @ApiPropertyOptional({
     description: 'Coupon code for discount',
     example: 'SUMMER2024',
   })
-  @IsString()
   @IsOptional()
+  @IsString()
   couponCode?: string;
 
   @ApiPropertyOptional({
@@ -117,11 +99,8 @@ export class CreateBookingDto {
     example: 50.0,
     minimum: 0,
   })
-  @IsNumber({ maxDecimalPlaces: 2 })
   @IsOptional()
-  @Min(0, {
-    message: 'Discount price cannot be negative',
-  })
+  @IsNumber()
   @Type(() => Number)
   discountPrice?: number;
 }

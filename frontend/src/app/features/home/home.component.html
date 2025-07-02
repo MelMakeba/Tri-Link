@@ -1,37 +1,280 @@
 <app-navbar></app-navbar>
-<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#86718e] via-white to-[#431216] py-12 px-4">
-  <div class="bg-white rounded-2xl shadow-2xl p-10 max-w-lg w-full">
-    <div class="flex flex-col items-center mb-8">
-      <div class="bg-gradient-to-r from-[#351243] to-[#86718e] p-4 rounded-full shadow-lg mb-4">
-        <svg class="w-14 h-14 text-white" fill="currentColor" viewBox="0 0 20 20">
-          <path d="M4 3a2 2 0 00-2 2v1.5h16V5a2 2 0 00-2-2H4z"/>
-          <path fill-rule="evenodd" d="M18 7.5H2V17a2 2 0 002 2h12a2 2 0 002-2V7.5zm-12 5a.5.5 0 01.5-.5h3a.5.5 0 010 1h-3a.5.5 0 01-.5-.5zm0 2a.5.5 0 01.5-.5h7a.5.5 0 010 1h-7a.5.5 0 01-.5-.5z" clip-rule="evenodd"/>
-        </svg>
-      </div>
-      <h1 class="text-3xl font-extrabold text-[#351243] mb-2">Welcome to Tri-Link Car Rentals!</h1>
-      <p class="text-[#86718e] text-lg text-center">Your one-stop platform for renting and managing vehicles.</p>
-    </div>
 
-    <ng-container *ngIf="!user">
-      <div class="flex justify-center gap-4 mb-8">
-        <button (click)="goToLogin()"
-          class="px-6 py-2 rounded-lg bg-gradient-to-r from-[#351243] to-[#86718e] text-white font-semibold shadow hover:from-[#431216] hover:to-[#86718e] transition-all duration-150">
-          Login
-        </button>
-        <button (click)="goToRegister()"
-          class="px-6 py-2 rounded-lg border border-[#351243] text-[#351243] font-semibold bg-white hover:bg-[#86718e]/10 transition-all duration-150">
-          Register
-        </button>
-      </div>
-    </ng-container>
-
-       <div class="features mt-6">
-      <h3 class="text-xl font-bold text-[#351243] mb-3">What you can do:</h3>
-      <ul class="list-disc list-inside space-y-2 text-[#431216]">
-        <li>Search and reserve cars</li>
-        <li>Manage your rentals and profile</li>
-        <li>Admins/Agents: Manage cars, bookings, and users</li>
-      </ul>
+<!-- Hero Section with Animation -->
+<section class="relative h-screen bg-gray-900 text-white flex items-center overflow-hidden">
+  <!-- Background Video or Image -->
+  <div class="absolute inset-0 z-0 bg-cover bg-center" style="background-image: url('assets/images/hero-bg.jpg');">
+    <div class="absolute inset-0 bg-black opacity-60"></div>
+  </div>
+  
+  <div class="relative z-10 container mx-auto px-6 flex flex-col items-center text-center">
+    <h1 class="text-5xl md:text-6xl font-bold mb-4 animate__animated animate__fadeInDown">
+      Your Journey Begins <span class="text-[#86718e]">Here</span>
+    </h1>
+    <p class="text-xl md:text-2xl mb-8 max-w-2xl animate__animated animate__fadeIn animate__delay-1s">
+      Rent the perfect vehicle for your adventure from our premium selection
+    </p>
+    
+    <!-- Quick Search Form -->
+    <div class="w-full max-w-4xl bg-white rounded-lg shadow-lg p-6 animate__animated animate__fadeInUp animate__delay-2s">
+      <form [formGroup]="searchForm" (ngSubmit)="searchVehicles()" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div class="form-control">
+          <label class="label text-gray-700 text-sm">Location</label>
+          <input type="text" formControlName="location" placeholder="Where are you going?" class="input input-bordered w-full">
+          <div *ngIf="searchForm.get('location')?.invalid && searchForm.get('location')?.touched" class="text-red-500 text-xs mt-1">
+            Location is required
+          </div>
+        </div>
+        
+        <div class="form-control">
+          <label class="label text-gray-700 text-sm">Pick-up Date</label>
+          <input type="date" formControlName="startDate" class="input input-bordered w-full">
+          <div *ngIf="searchForm.get('startDate')?.invalid && searchForm.get('startDate')?.touched" class="text-red-500 text-xs mt-1">
+            Pick-up date is required
+          </div>
+        </div>
+        
+        <div class="form-control">
+          <label class="label text-gray-700 text-sm">Return Date</label>
+          <input type="date" formControlName="endDate" class="input input-bordered w-full">
+          <div *ngIf="searchForm.get('endDate')?.invalid && searchForm.get('endDate')?.touched" class="text-red-500 text-xs mt-1">
+            Return date is required
+          </div>
+        </div>
+        
+        <div class="form-control flex items-end">
+          <button type="submit" class="btn btn-primary w-full" [disabled]="searchForm.invalid">
+            <span class="material-icons mr-2">search</span> Find Vehicles
+          </button>
+        </div>
+      </form>
     </div>
   </div>
-</div>
+  
+  <!-- Scroll Down Animation -->
+  <a href="#featured" class="absolute bottom-10 left-1/2 transform -translate-x-1/2 text-white animate-bounce">
+    <span class="material-icons text-3xl"> </span>
+  </a>
+</section>
+
+<!-- Featured Vehicles Section -->
+<section id="featured" class="py-16 bg-gray-100">
+  <div class="container mx-auto px-6">
+    <h2 class="text-4xl font-bold text-center text-gray-800 mb-2">Featured Vehicles</h2>
+    <p class="text-xl text-center text-gray-600 mb-12">Our most popular rental choices</p>
+    
+    <div *ngIf="isLoading" class="flex justify-center items-center h-40">
+      <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#351243]"></div>
+    </div>
+    
+    <div *ngIf="!isLoading && featuredVehicles.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div *ngFor="let vehicle of featuredVehicles" class="bg-white rounded-xl shadow-lg overflow-hidden transform transition-all duration-300 hover:scale-105 hover:shadow-xl">
+        <div class="relative h-52">
+          <img [src]="vehicle.images[0] || 'assets/images/default-car.jpg'" alt="{{vehicle.make}} {{vehicle.model}}" 
+            class="w-full h-full object-cover">
+          <div class="absolute top-4 left-4 bg-[#351243] text-white px-3 py-1 rounded-full text-sm font-medium">
+            {{vehicle.category}}
+          </div>
+        </div>
+        
+        <div class="p-6">
+          <h3 class="text-xl font-bold text-gray-800 mb-2">{{vehicle.make}} {{vehicle.model}}</h3>
+          <div class="flex items-center text-sm text-gray-600 mb-4">
+            <span class="material-icons text-[#86718e] mr-1">event_seat</span> {{vehicle.seats}} seats
+            <span class="material-icons text-[#86718e] mx-1 ml-4">settings</span> {{vehicle.transmission}}
+            <span class="material-icons text-[#86718e] mx-1 ml-4">local_gas_station</span> {{vehicle.fuelType}}
+          </div>
+          
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm text-gray-500">Daily Rate</p>
+              <p class="text-2xl font-bold text-[#351243]">${{vehicle.pricePerDay}}</p>
+            </div>
+            <button (click)="router.navigate(['/vehicles', vehicle.id])" class="btn btn-primary">
+              View Details
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div *ngIf="!isLoading && featuredVehicles.length === 0" class="text-center">
+      <p class="text-gray-500">No featured vehicles available at the moment.</p>
+    </div>
+    
+    <div class="flex justify-center mt-10">
+      <button (click)="router.navigate(['/vehicles'])" class="btn btn-outline btn-lg">
+        View All Vehicles
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- Statistics Section -->
+<section class="py-16 bg-gradient-to-br from-[#351243] to-[#431216] text-white">
+  <div class="container mx-auto px-6">
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-8">
+      <div *ngFor="let stat of stats" class="text-center">
+        <div class="flex justify-center mb-3">
+          <div class="bg-white/20 rounded-full p-4">
+            <span class="material-icons text-3xl">{{stat.icon}}</span>
+          </div>
+        </div>
+        <p class="text-4xl font-bold mb-2">
+          {{stat.value}}{{stat.suffix || ''}}
+        </p>
+        <p class="text-xl">{{stat.label}}</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Testimonials Section -->
+<section class="py-16 bg-gray-100">
+  <div class="container mx-auto px-6">
+    <h2 class="text-4xl font-bold text-center text-gray-800 mb-2">What Our Customers Say</h2>
+    <p class="text-xl text-center text-gray-600 mb-12">Hear from people who have experienced our service</p>
+    
+    <div class="relative max-w-4xl mx-auto">
+      <div class="overflow-hidden">
+        <div class="transition-all duration-500" [style.transform]="'translateX(-' + (activeTestimonial * 100) + '%)'">
+          <div class="flex">
+            <div *ngFor="let testimonial of testimonials" class="w-full flex-shrink-0 p-4">
+              <div class="bg-white rounded-xl shadow-lg p-8 text-center">
+                <div class="mb-6">
+                  <div class="flex justify-center">
+                    <img [src]="testimonial.image" alt="{{testimonial.name}}" class="w-20 h-20 rounded-full object-cover">
+                  </div>
+                  <p class="text-lg font-bold mt-2">{{testimonial.name}}</p>
+                  <div class="flex justify-center mt-1">
+                    <span *ngFor="let star of [1,2,3,4,5]" class="material-icons text-yellow-400">
+                      {{ star <= testimonial.rating ? 'star' : 'star_border' }}
+                    </span>
+                  </div>
+                </div>
+                <p class="text-gray-600 italic">"{{testimonial.comment}}"</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <button (click)="prevTestimonial()" class="absolute top-1/2 -left-4 transform -translate-y-1/2 bg-white rounded-full shadow-lg p-2">
+        <span class="material-icons">chevron_left</span>
+      </button>
+      
+      <button (click)="nextTestimonial()" class="absolute top-1/2 -right-4 transform -translate-y-1/2 bg-white rounded-full shadow-lg p-2">
+        <span class="material-icons">chevron_right</span>
+      </button>
+      
+      <div class="flex justify-center mt-6">
+        <div *ngFor="let testimonial of testimonials; let i = index" 
+          class="w-3 h-3 rounded-full mx-1 cursor-pointer"
+          [ngClass]="i === activeTestimonial ? 'bg-[#351243]' : 'bg-gray-300'"
+          (click)="activeTestimonial = i">
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- How It Works Section -->
+<section class="py-16 bg-white">
+  <div class="container mx-auto px-6">
+    <h2 class="text-4xl font-bold text-center text-gray-800 mb-2">How It Works</h2>
+    <p class="text-xl text-center text-gray-600 mb-12">Renting a car has never been easier</p>
+    
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div class="text-center">
+        <div class="flex justify-center mb-4">
+          <div class="bg-[#f0e6f5] rounded-full p-6 inline-block">
+            <span class="material-icons text-4xl text-[#351243]">search</span>
+          </div>
+        </div>
+        <h3 class="text-2xl font-bold text-gray-800 mb-2">Search</h3>
+        <p class="text-gray-600">Find the perfect vehicle for your needs using our search filters</p>
+      </div>
+      
+      <div class="text-center">
+        <div class="flex justify-center mb-4">
+          <div class="bg-[#f0e6f5] rounded-full p-6 inline-block">
+            <span class="material-icons text-4xl text-[#351243]">date_range</span>
+          </div>
+        </div>
+        <h3 class="text-2xl font-bold text-gray-800 mb-2">Book</h3>
+        <p class="text-gray-600">Choose your dates and book instantly with our secure platform</p>
+      </div>
+      
+      <div class="text-center">
+        <div class="flex justify-center mb-4">
+          <div class="bg-[#f0e6f5] rounded-full p-6 inline-block">
+            <span class="material-icons text-4xl text-[#351243]">directions_car</span>
+          </div>
+        </div>
+        <h3 class="text-2xl font-bold text-gray-800 mb-2">Enjoy</h3>
+        <p class="text-gray-600">Pick up your vehicle and enjoy your journey with peace of mind</p>
+      </div>
+    </div>
+    
+    <div class="text-center mt-12">
+      <button (click)="user ? router.navigate(['/vehicles']) : goToRegister()" class="btn btn-primary btn-lg">
+        {{ user ? 'Browse Vehicles' : 'Get Started' }}
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ Section -->
+<section class="py-16 bg-gray-100">
+  <div class="container mx-auto px-6">
+    <h2 class="text-4xl font-bold text-center text-gray-800 mb-2">Frequently Asked Questions</h2>
+    <p class="text-xl text-center text-gray-600 mb-12">Get answers to common questions about our service</p>
+    
+    <div class="max-w-3xl mx-auto">
+      <div *ngFor="let faq of faqs; let i = index" class="mb-4">
+        <div 
+          (click)="toggleFaq(i)" 
+          class="flex justify-between items-center p-4 bg-white rounded-lg shadow-md cursor-pointer hover:bg-gray-50">
+          <h3 class="text-lg font-medium">{{faq.question}}</h3>
+          <span class="material-icons transition-transform duration-300" [ngClass]="{'transform rotate-180': faq.isOpen}">
+            expand_more
+          </span>
+        </div>
+        <div 
+          class="overflow-hidden bg-white rounded-b-lg shadow-md transition-all duration-300 ease-in-out"
+          [ngClass]="{'max-h-0 opacity-0': !faq.isOpen, 'max-h-96 opacity-100 p-4': faq.isOpen}">
+          <p class="text-gray-600">{{faq.answer}}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Newsletter Section -->
+<section class="py-16 bg-gradient-to-br from-[#351243] to-[#431216] text-white">
+  <div class="container mx-auto px-6">
+    <div class="max-w-3xl mx-auto text-center">
+      <h2 class="text-4xl font-bold mb-4">Stay Updated</h2>
+      <p class="text-xl mb-8">Subscribe to our newsletter for exclusive offers and updates</p>
+      
+      <div class="flex flex-col md:flex-row gap-4">
+        <input 
+          type="email" 
+          [(ngModel)]="newsletterEmail"
+          placeholder="Enter your email address" 
+          class="input input-bordered flex-grow text-gray-800">
+          
+        <button 
+          (click)="subscribeNewsletter()" 
+          class="btn bg-white text-[#351243] border-white hover:bg-gray-100"
+          [disabled]="isSubscribing">
+          <span *ngIf="isSubscribing" class="material-icons animate-spin mr-2">sync</span>
+          <span *ngIf="!isSubscribing" class="material-icons mr-2">mail</span>
+          Subscribe
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer section would go here -->

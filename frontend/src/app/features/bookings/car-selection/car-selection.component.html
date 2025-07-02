@@ -1,1 +1,154 @@
-<p>car-selection works!</p>
+<div class="p-6">
+  <h2 class="text-2xl font-bold text-[#351243] mb-6">Choose Your Vehicle</h2>
+
+  <!-- Search Form -->
+  <form [formGroup]="searchForm" class="mb-8 bg-gray-50 p-4 rounded-lg">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Location</label>
+        <input 
+          type="text" 
+          formControlName="location" 
+          placeholder="Any location"
+          class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#86718e]">
+      </div>
+      
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Category</label>
+        <select 
+          formControlName="category"
+          class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#86718e]">
+          <option value="">Any category</option>
+          <option *ngFor="let category of categories" [value]="category">{{ category }}</option>
+        </select>
+      </div>
+      
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
+        <input 
+          type="date" 
+          formControlName="startDate"
+          class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#86718e]">
+      </div>
+      
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">End Date</label>
+        <input 
+          type="date" 
+          formControlName="endDate"
+          class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#86718e]">
+      </div>
+    </div>
+  </form>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="flex justify-center items-center py-12">
+    <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#351243]"></div>
+  </div>
+
+  <!-- Check for loading state -->
+  <div *ngIf="isLoading" class="text-center py-12">
+    Loading vehicles...
+  </div>
+
+  <!-- No Results -->
+  <div *ngIf="!isLoading && filteredVehicles.length === 0" class="text-center py-12">
+    <div class="text-gray-400 mb-2">
+      <span class="material-icons text-5xl">search_off</span>
+    </div>
+    <h3 class="text-xl font-medium text-gray-500">No vehicles available</h3>
+    <p class="text-gray-400">Try changing your search criteria</p>
+  </div>
+
+  <!-- Vehicle Grid -->
+  <div *ngIf="!isLoading && filteredVehicles.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div *ngFor="let vehicle of filteredVehicles" 
+         [ngClass]="{'border-[#351243] border-2 shadow-lg transform scale-[1.02]': isSelected(vehicle)}"
+         class="bg-white rounded-xl overflow-hidden shadow transition-all duration-200 hover:shadow-lg border border-gray-100 cursor-pointer"
+         (click)="selectVehicle(vehicle)">
+      
+      <!-- Vehicle Image -->
+      <div class="relative h-48 bg-gray-200">
+        <img *ngIf="vehicle.images && vehicle.images.length" 
+             [src]="vehicle.images[0]" 
+             alt="{{ vehicle.make }} {{ vehicle.model }}"
+             class="w-full h-full object-cover" />
+        
+        <div *ngIf="!vehicle.images || !vehicle.images.length" 
+             class="flex items-center justify-center h-full bg-gray-100">
+          <span class="text-gray-400">
+            <span class="material-icons text-4xl">directions_car</span>
+          </span>
+        </div>
+
+        <!-- Selection Indicator -->
+        <div *ngIf="isSelected(vehicle)" class="absolute top-3 right-3">
+          <span class="bg-[#351243] text-white p-1 rounded-full">
+            <span class="material-icons text-sm">check</span>
+          </span>
+        </div>
+      </div>
+      
+      <!-- Vehicle Info -->
+      <div class="p-4">
+        <h3 class="text-xl font-semibold text-[#351243]">{{ vehicle.make }} {{ vehicle.model }}</h3>
+        <p class="text-gray-500 mb-2">{{ vehicle.year }} • {{ vehicle.category }}</p>
+        
+        <div class="flex justify-between items-center mb-3">
+          <div class="flex items-center text-sm text-gray-500">
+            <span class="material-icons text-sm mr-1">people</span>
+            {{ vehicle.seats }} seats
+          </div>
+          <div class="flex items-center text-sm text-gray-500">
+            <span class="material-icons text-sm mr-1">settings</span>
+            {{ vehicle.transmission }}
+          </div>
+        </div>
+        
+        <div class="flex items-center justify-between mt-4">
+          <div class="text-lg font-bold text-[#431216]">${{ vehicle.pricePerDay }}<span class="text-sm font-normal">/day</span></div>
+          
+          <button 
+            (click)="selectVehicle(vehicle); $event.stopPropagation()"
+            [ngClass]="{'bg-[#351243] text-white': isSelected(vehicle), 'bg-gray-100 text-[#351243]': !isSelected(vehicle)}"
+            class="px-4 py-1 rounded-full text-sm font-medium transition-colors">
+            {{ isSelected(vehicle) ? 'Selected' : 'Select' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Check for empty state -->
+  <div *ngIf="!isLoading && vehicles.length === 0" class="text-center py-12">
+    No vehicles available
+  </div>
+
+  <!-- Selection Summary -->
+  <div *ngIf="selectedVehicle" class="mt-8 bg-gray-50 p-4 rounded-lg">
+    <h3 class="text-lg font-medium text-[#351243]">Your Selection</h3>
+    <div class="flex items-center mt-2">
+      <img 
+        *ngIf="selectedVehicle.images && selectedVehicle.images.length" 
+        [src]="selectedVehicle.images[0]"
+        class="w-16 h-16 object-cover rounded mr-4" 
+        alt="{{ selectedVehicle.make }} {{ selectedVehicle.model }}">
+      <div>
+        <p class="font-semibold">{{ selectedVehicle.make }} {{ selectedVehicle.model }}</p>
+        <p class="text-sm text-gray-500">{{ selectedVehicle.year }} • {{ selectedVehicle.category }}</p>
+        <p class="font-medium text-[#431216]">${{ selectedVehicle.pricePerDay }}/day</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- No Selection Warning -->
+  <div *ngIf="!selectedVehicle" class="mt-8 bg-yellow-50 p-4 rounded-lg">
+    <div class="flex items-start">
+      <span class="material-icons text-yellow-500 mr-2">info</span>
+      <div>
+        <h3 class="text-md font-medium text-yellow-800">No vehicle selected</h3>
+        <p class="text-sm text-yellow-700">Please select a vehicle to continue</p>
+      </div>
+    </div>
+  </div>
+</div>

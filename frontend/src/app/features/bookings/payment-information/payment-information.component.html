@@ -1,1 +1,226 @@
-<p>payment-information works!</p>
+<div class="p-6">
+  <h2 class="text-2xl font-bold text-[#351243] mb-6">Payment Details</h2>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+    <!-- Payment Form -->
+    <div class="md:col-span-2">
+      <form [formGroup]="paymentForm" class="space-y-6">
+        <!-- Payment Method Selection -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Payment Method</label>
+          <div class="flex space-x-4">
+            <label *ngFor="let method of paymentMethods" class="flex items-center">
+              <input 
+                type="radio" 
+                formControlName="paymentMethod" 
+                [value]="method" 
+                class="h-4 w-4 text-[#351243] focus:ring-[#86718e] border-gray-300">
+              <span class="ml-2 text-sm text-gray-700">{{ method }}</span>
+            </label>
+          </div>
+        </div>
+        
+        <!-- Make card fields only appear when Credit Card is selected: -->
+        <div *ngIf="paymentForm.get('paymentMethod')?.value === 'Credit Card'">
+          <!-- Card Holder Name -->
+          <div>
+            <label for="cardHolder" class="block text-sm font-medium text-gray-700 mb-1">Card Holder Name</label>
+            <input 
+              type="text" 
+              id="cardHolder"
+              formControlName="cardHolder"
+              placeholder="Name on card"
+              class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#86718e]">
+            <div *ngIf="paymentForm.get('cardHolder')?.invalid && paymentForm.get('cardHolder')?.touched" class="text-red-600 text-xs mt-1">
+              Card holder name is required
+            </div>
+          </div>
+          
+          <!-- Card Number -->
+          <div>
+            <label for="cardNumber" class="block text-sm font-medium text-gray-700 mb-1">Card Number</label>
+            <input 
+              type="text" 
+              id="cardNumber"
+              formControlName="cardNumber"
+              placeholder="0000 0000 0000 0000"
+              maxlength="16"
+              class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#86718e]">
+            <div *ngIf="paymentForm.get('cardNumber')?.invalid && paymentForm.get('cardNumber')?.touched" class="text-red-600 text-xs mt-1">
+              Please enter a valid 16-digit card number
+            </div>
+          </div>
+          
+          <!-- Expiry Date and CVV -->
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Expiry Date</label>
+              <div class="grid grid-cols-2 gap-2">
+                <select 
+                  formControlName="expiryMonth"
+                  class="p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#86718e]">
+                  <option value="" disabled>Month</option>
+                  <option *ngFor="let month of months" [value]="month">
+                    {{ month.toString().padStart(2, '0') }}
+                  </option>
+                </select>
+                
+                <select 
+                  formControlName="expiryYear"
+                  class="p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#86718e]">
+                  <option value="" disabled>Year</option>
+                  <option *ngFor="let year of years" [value]="year">{{ year }}</option>
+                </select>
+              </div>
+              <div *ngIf="(paymentForm.get('expiryMonth')?.invalid && paymentForm.get('expiryMonth')?.touched) || 
+                          (paymentForm.get('expiryYear')?.invalid && paymentForm.get('expiryYear')?.touched)" 
+                   class="text-red-600 text-xs mt-1">
+                Expiry date is required
+              </div>
+            </div>
+            
+            <div>
+              <label for="cvv" class="block text-sm font-medium text-gray-700 mb-1">CVV</label>
+              <input 
+                type="password" 
+                id="cvv"
+                formControlName="cvv"
+                placeholder="123"
+                maxlength="4"
+                class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#86718e]">
+              <div *ngIf="paymentForm.get('cvv')?.invalid && paymentForm.get('cvv')?.touched" class="text-red-600 text-xs mt-1">
+                Valid CVV is required (3-4 digits)
+              </div>
+            </div>
+          </div>
+          
+          <!-- Save Payment Method -->
+          <div class="flex items-start mt-4">
+            <div class="flex items-center h-5">
+              <input 
+                id="savePaymentMethod" 
+                formControlName="savePaymentMethod"
+                type="checkbox"
+                class="h-4 w-4 text-[#351243] focus:ring-[#86718e] border-gray-300 rounded">
+            </div>
+            <div class="ml-3 text-sm">
+              <label for="savePaymentMethod" class="text-gray-700">
+                Save this payment method for future bookings
+              </label>
+            </div>
+          </div>
+        </div>
+        
+        <ng-container *ngIf="paymentForm.get('paymentMethod')?.value === 'PayPal'">
+          <div class="bg-blue-50 p-6 rounded-lg text-center">
+            <img src="assets/icons/paypal-logo.png" alt="PayPal" class="h-10 mx-auto mb-4">
+            <p class="text-gray-700 mb-4">You will be redirected to PayPal to complete your payment after reviewing your booking details.</p>
+            <p class="text-sm text-gray-500">Note: This is a demonstration. Actual PayPal integration would be implemented in production.</p>
+          </div>
+        </ng-container>
+        
+        <!-- Coupon Code -->
+        <div class="mt-8 pt-6 border-t border-gray-200">
+          <label class="block text-sm font-medium text-gray-700 mb-2">Coupon Code (Optional)</label>
+          
+          <div *ngIf="!couponApplied" class="flex">
+            <input 
+              type="text" 
+              formControlName="couponCode"
+              placeholder="Enter coupon code"
+              class="flex-1 p-2 border border-gray-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-[#86718e]">
+            <button 
+              type="button"
+              (click)="applyCoupon()"
+              [disabled]="isApplyingCoupon"
+              class="px-4 py-2 bg-[#86718e] text-white rounded-r-lg hover:bg-[#351243] transition flex items-center">
+              <span *ngIf="isApplyingCoupon" class="inline-block animate-spin mr-2">⟳</span>
+              <span>{{ isApplyingCoupon ? 'Applying...' : 'Apply' }}</span>
+            </button>
+          </div>
+          
+          <div *ngIf="couponApplied" class="flex items-center justify-between p-2 bg-green-50 border border-green-200 rounded-lg">
+            <div class="flex items-center">
+              <span class="material-icons text-green-500 mr-2">check_circle</span>
+              <span class="text-green-800">Coupon <span class="font-medium">{{ paymentForm.get('couponCode')?.value }}</span> applied!</span>
+            </div>
+            <button 
+              type="button"
+              (click)="removeCoupon()"
+              class="text-red-500 hover:text-red-700">
+              Remove
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+    
+    <!-- Summary -->
+    <div class="md:col-span-1">
+      <div class="bg-gray-50 p-4 rounded-lg">
+        <h3 class="font-medium text-[#351243] mb-4">Booking Summary</h3>
+        
+        <ng-container *ngIf="bookingStateService.currentState as state">
+          <!-- Vehicle Info -->
+          <div class="mb-4" *ngIf="state.selectedVehicle">
+            <p class="text-sm font-medium text-gray-700">Vehicle</p>
+            <p class="text-[#351243] font-semibold">{{ state.selectedVehicle.make }} {{ state.selectedVehicle.model }}</p>
+            <p class="text-xs text-gray-500">{{ state.selectedVehicle.year }} • {{ state.selectedVehicle.category }}</p>
+          </div>
+          
+          <!-- Dates -->
+          <div class="mb-4" *ngIf="state.startDate && state.endDate">
+            <p class="text-sm font-medium text-gray-700">Rental Period</p>
+            <p class="text-[#351243]">{{ state.startDate | date:'MMM d, y' }} at {{ state.startTime }}</p>
+            <p class="text-[#351243]">to {{ state.endDate | date:'MMM d, y' }} at {{ state.endTime }}</p>
+          </div>
+          
+          <!-- Locations -->
+          <div class="mb-4">
+            <p class="text-sm font-medium text-gray-700">Pick-up Location</p>
+            <p class="text-[#351243]">{{ state.pickupLocation }}</p>
+            
+            <p class="text-sm font-medium text-gray-700 mt-2">Return Location</p>
+            <p class="text-[#351243]">{{ state.returnLocation }}</p>
+          </div>
+          
+          <!-- Price Summary -->
+          <div class="pt-3 border-t border-gray-200">
+            <div class="flex justify-between items-center text-sm mb-2">
+              <span class="text-gray-600">Rental Total:</span>
+              <span class="font-medium">${{ state.totalPrice }}</span>
+            </div>
+            
+            <div *ngIf="state.discountPrice > 0" class="flex justify-between items-center text-sm mb-2 text-green-600">
+              <span>Discount:</span>
+              <span class="font-medium">-${{ state.discountPrice }}</span>
+            </div>
+            
+            <div class="flex justify-between items-center mt-2 pt-2 border-t border-gray-200">
+              <span class="font-medium text-gray-800">Final Price:</span>
+              <span class="text-lg font-bold text-[#431216]">${{ state.finalPrice }}</span>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+      
+      <!-- Payment Security -->
+      <div class="mt-4 bg-green-50 p-4 rounded-lg text-sm text-green-800">
+        <div class="flex items-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500 mr-2" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
+          </svg>
+          <p>Your payment is secured with 256-bit SSL encryption.</p>
+        </div>
+      <!-- Continue to next step button -->
+      <button 
+        type="button"
+        [disabled]="paymentForm.invalid"
+        (click)="submitPaymentInfo()" 
+        class="w-full mt-4 py-3 bg-[#351243] text-white rounded-lg hover:bg-[#86718e] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center">
+        <span *ngIf="isProcessing" class="inline-block animate-spin mr-2">⟳</span>
+        <span *ngIf="!isProcessing">Continue to Summary</span>
+      </button>
+    </div>
+  </div>
+</div>

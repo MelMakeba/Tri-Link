@@ -12,11 +12,10 @@
             <span>🏠</span> Dashboard
           </a>
           <a 
-            routerLink="/bookings"
+            routerLink="/customer/book" 
             routerLinkActive="bg-[#86718e] text-[#351243]"
-            class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-[#86718e] transition font-medium"
-          >
-            <span>📅</span> My Bookings
+            class="menu-item flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-[#86718e] transition font-medium">
+            <span class="material-icons text-sm">🚗</span> Book a Vehicle
           </a>
           <a 
             routerLink="/profile"
@@ -26,12 +25,12 @@
             <span>👤</span> Profile
           </a>
           <a 
-            routerLink="/support"
+            routerLink="/customer/bookings"
             routerLinkActive="bg-[#86718e] text-[#351243]"
             class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-[#86718e] transition font-medium"
           >
-            <span>💬</span> Support
-          </a>
+            <span>🚗</span> My Bookings
+          </a>         
         </nav>
       </aside>
 

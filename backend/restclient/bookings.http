@@ -1,74 +1,88 @@
 @baseUrl = http://localhost:3000
 @contentType = application/json
-@userToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJlZTgwYmI0Ny0wOGFjLTRkOGItOWMyYS0yNTJiNmIyODQ0NjIiLCJlbWFpbCI6IndlYnMzQGdtYWlsLmNvbSIsInJvbGUiOiJDVVNUT01FUiIsImlhdCI6MTc1MTI4OTYyNiwiZXhwIjoxNzUxMjkzMjI2fQ.dNRoMj-skUdkmLJ76NeQTAwVjOFRw5niy7xr5yl3PK0
+@userToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJlZTgwYmI0Ny0wOGFjLTRkOGItOWMyYS0yNTJiNmIyODQ0NjIiLCJlbWFpbCI6IndlYnMzQGdtYWlsLmNvbSIsInJvbGUiOiJDVVNUT01FUiIsImlhdCI6MTc1MTQ0ODYyNSwiZXhwIjoxNzUxNDUyMjI1fQ.4KgyiEy8LxmbmMcd1IaaHc4BRvprmb-GiTjtaPHU5qY
+@adminToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkZmQ2NzZhZS0zYzc3LTQ0NWMtOTJjZS1hYzljMTYxYmQ3NDgiLCJlbWFpbCI6Im1lbGlzc2FtYWtlYmFAZ21haWwuY29tIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzUxNDI4NzkzLCJleHAiOjE3NTE0MzIzOTN9.9VqFpSgOTngKzz_B9bwOQiSlKUbnzpYyoY3VMKFRlAI
 
-@agentToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjYjcxNGM2YS03MWIyLTQwOTUtYTYyOS1iYzM4ZmVhZjg1MTEiLCJlbWFpbCI6Im1lbGsuaWxlbmEuYUBnbWFpbC5jb20iLCJyb2xlIjoiQUdFTlQiLCJpYXQiOjE3NTEyODk0NzQsImV4cCI6MTc1MTI5MzA3NH0.v4h3zPxnoPzLpHi5ZaaXO-QvMsVmrEd7rcGsq1P-9R4
-### Create a new booking (Customer)
+### Login as customer to get token
+# @name login
+POST {{baseUrl}}/auth/login
+Content-Type: {{contentType}}
+
+{
+  "email": "webs3@gmail.com",
+  "password": "QWERTY1234"
+}
+
+### Login as admin to get token
+# @name adminLogin
+POST {{baseUrl}}/auth/login
+Content-Type: {{contentType}}
+
+{
+  "email": "melissamakeba@gmail.com",
+  "password": "meladmin123"
+}
+
+### Search for available vehicles
+GET {{baseUrl}}/bookings/availability/search?startDate=2025-07-10&endDate=2025-07-15&category=Sedan
+Content-Type: {{contentType}}
+
+### Create a new booking
 POST {{baseUrl}}/bookings
 Content-Type: {{contentType}}
 Authorization: Bearer {{userToken}}
 
 {
-  "vehicleId": "377b8a59-a40b-45a7-9f3b-dd3c887abca7",
-  "startDate": "2025-07-15T08:00:00Z",
-  "endDate": "2025-07-20T18:00:00Z",
-  "startTime": "2025-07-15T08:00:00Z",
-  "endTime": "2025-07-20T18:00:00Z",
-  "pickupLocation": "123 Main St, City",
-  "returnLocation": "123 Main St, City",
-  "discountPrice": 0,
-  "couponCode": "",
-  "notes": "Special requests here",
-  "driverLicenseNumber": "DL12345678"
+  "vehicleId": "f8517840-9361-4cd5-9645-c58f62f87331",
+  "startDate": "2025-07-10",
+  "endDate": "2025-07-15",
+  "startTime": "10:00",
+  "endTime": "18:00",
+  "pickupLocation": "123 Main St, New York, NY",
+  "returnLocation": "123 Main St, New York, NY",
+  "notes": "Please have the car ready by 9:45",
+  "driverLicenseNumber": "DL123456"
 }
 
-### Get all bookings for customer (Customer)
-GET {{baseUrl}}/bookings
+### Get all bookings (admin)
+GET {{baseUrl}}/bookings?page=1&limit=10
+Content-Type: {{contentType}}
+Authorization: Bearer {{adminToken}}
+
+### Get my bookings (customer)
+GET {{baseUrl}}/bookings/get-all?page=1&limit=10
+Content-Type: {{contentType}}
 Authorization: Bearer {{userToken}}
 
-### Get single booking (Customer)
-GET {{baseUrl}}/bookings/booking-uuid-here
+### Get a specific booking
+GET {{baseUrl}}/bookings/get/1595012e-917f-4ba2-a801-a88b447ddc8a
+Content-Type: {{contentType}}
 Authorization: Bearer {{userToken}}
 
-### Update booking (Customer)
-PUT {{baseUrl}}/bookings/3821d1f0-41a9-4f0f-be1c-14081bffc75b
+### Update a booking
+PUT {{baseUrl}}/bookings/booking-uuid-here
 Content-Type: {{contentType}}
 Authorization: Bearer {{userToken}}
 
 {
-  "pickupLocation": "456 New St, City",
-  "returnLocation": "456 New St, City",
-  "notes": "Updated special requests"
+  "notes": "I'll arrive at 10:30 instead"
 }
 
-### Cancel booking (Customer)
+### Update booking status (admin or agent)
+PUT {{baseUrl}}/bookings/74aa142c-d3d9-4b44-ae89-6c5a2097d950/status
+Content-Type: {{contentType}}
+Authorization: Bearer {{adminToken}}
+
+{
+  "status": "CONFIRMED"
+}
+
+### Cancel a booking
 PUT {{baseUrl}}/bookings/booking-uuid-here/cancel
+Content-Type: {{contentType}}
 Authorization: Bearer {{userToken}}
 
-### Get all bookings for agent's vehicles (Agent)
-GET {{baseUrl}}/bookings/agent/mine
-Authorization: Bearer {{agentToken}}
-
-### Update booking status (Agent/Admin)
-PUT {{baseUrl}}/bookings/3821d1f0-41a9-4f0f-be1c-14081bffc75b/status
+### Delete a booking (admin only)
+DELETE {{baseUrl}}/bookings/booking-uuid-here
 Content-Type: {{contentType}}
-Authorization: Bearer {{agentToken}}
-
-{
-  "status": "PENDING"
-}
-
-### Return a car (Agent/Admin)
-PUT {{baseUrl}}/bookings/3821d1f0-41a9-4f0f-be1c-14081bffc75b/return
-Content-Type: {{contentType}}
-Authorization: Bearer {{agentToken}}
-
-{
-  "condition": "GOOD",
-  "fuelLevel": "HALF",
-  "mileage": 15000
-}
-
-### Search available vehicles (Public)
-GET {{baseUrl}}/bookings/availability/search?startDate=2023-07-15&endDate=2023-07-20&location=City&category=SEDAN
-Authorization: Bearer {{userToken}}
+Authorization: Bearer {{adminToken}}

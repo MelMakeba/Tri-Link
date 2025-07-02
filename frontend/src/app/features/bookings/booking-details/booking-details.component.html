@@ -1,0 +1,214 @@
+<div class="p-6 bg-gradient-to-br from-[#86718e] via-white to-[#431216] min-h-screen">
+  <div class="max-w-5xl mx-auto">
+    <!-- Header with back button -->
+    <div class="flex items-center mb-6">
+      <button (click)="goBack()" class="mr-4 bg-white p-2 rounded-full shadow hover:bg-gray-50">
+        <span class="material-icons"> Back << </span>
+      </button>
+      <div>
+        <h1 class="text-3xl font-bold text-[#351243]">Booking Details</h1>
+        <p class="text-gray-600">View the details of your vehicle rental</p>
+      </div>
+    </div>
+    
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="flex justify-center items-center py-12">
+      <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#351243]"></div>
+    </div>
+    
+    <!-- Error Message -->
+    <div *ngIf="error && !isLoading" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-6">
+      <p>{{ error }}</p>
+      <button (click)="loadBookingDetails()" class="mt-2 text-sm underline">Try again</button>
+    </div>
+    
+    <!-- Booking Details -->
+    <div *ngIf="booking && !isLoading" class="bg-white rounded-xl shadow-lg overflow-hidden">
+      <!-- Booking Header -->
+      <div class="bg-gray-50 p-6 border-b">
+        <div class="flex flex-wrap items-center justify-between">
+          <div>
+            <div class="flex items-center">
+              <h2 class="text-xl font-bold text-[#351243] mr-3">Booking #{{ booking.bookingNumber || 'N/A' }}</h2>
+              <span [ngClass]="['px-3 py-1 text-sm font-medium rounded-full border', getStatusClass(booking.status)]">
+                {{ booking.status.toLowerCase() }}
+              </span>
+            </div>
+            <p class="text-gray-500 mt-1">Created on {{ booking.createdAt | date:'MMM d, yyyy' }}</p>
+          </div>
+          <div class="mt-4 sm:mt-0">
+            <p class="text-sm text-gray-600">Total Price</p>
+            <p class="text-2xl font-bold text-[#431216]">${{ booking.finalPrice || 0 }}</p>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Main Content -->
+      <div class="p-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <!-- Vehicle Information -->
+          <div class="md:col-span-2">
+            <h3 class="text-lg font-semibold text-[#351243] mb-4">Vehicle Information</h3>
+            <div class="bg-gray-50 rounded-lg p-4 mb-6">
+              <div class="flex items-start">
+                <ng-container *ngIf="booking.vehicle">
+                  <div *ngIf="booking.vehicle.images && booking.vehicle.images.length > 0" class="mr-4 w-24 h-24 rounded-md overflow-hidden">
+                    <img [src]="booking.vehicle.images[0]" alt="Vehicle" class="w-full h-full object-cover">
+                  </div>
+                  <div *ngIf="!booking.vehicle.images || booking.vehicle.images.length === 0" class="mr-4 w-24 h-24 rounded-md overflow-hidden bg-gray-200 flex items-center justify-center">
+                    <span class="material-icons text-gray-400">directions_car</span>
+                  </div>
+                
+                  <div>
+                    <h4 class="text-xl font-bold text-[#351243]">
+                      {{ booking.vehicle.make }} {{ booking.vehicle.model }}
+                    </h4>
+                    <p class="text-gray-600">{{ booking.vehicle.year }} • {{ booking.vehicle.category }}</p>
+                    <div class="flex flex-wrap items-center mt-2 text-sm text-gray-600">
+                      <span *ngIf="booking.vehicle.seats" class="flex items-center mr-4 mb-2">
+                        <span class="material-icons text-gray-400 mr-1 text-sm">people</span>
+                        {{ booking.vehicle.seats }} seats
+                      </span>
+                      <span *ngIf="booking.vehicle.transmission" class="flex items-center mr-4 mb-2">
+                        <span class="material-icons text-gray-400 mr-1 text-sm">settings</span>
+                        {{ booking.vehicle.transmission }}
+                      </span>
+                      <span *ngIf="booking.vehicle.fuelType" class="flex items-center mr-4 mb-2">
+                        <span class="material-icons text-gray-400 mr-1 text-sm">local_gas_station</span>
+                        {{ booking.vehicle.fuelType }}
+                      </span>
+                    </div>
+                  </div>
+                </ng-container>
+                
+                <div *ngIf="!booking.vehicle" class="text-center w-full py-4">
+                  <span class="material-icons text-gray-400 text-5xl">directions_car</span>
+                  <p class="text-gray-500 mt-2">Vehicle information not available</p>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Rental Period -->
+            <h3 class="text-lg font-semibold text-[#351243] mb-4">Rental Period</h3>
+            <div class="bg-gray-50 rounded-lg p-4 mb-6">
+              <div class="flex flex-col md:flex-row md:justify-between">
+                <div class="mb-4 md:mb-0">
+                  <p class="text-sm text-gray-500">Pickup Date & Time</p>
+                  <p class="font-medium">{{ booking.startDate | date:'MMM d, yyyy' }}</p>
+                  <p class="font-medium">{{ booking.startTime || 'Not specified' }}</p>
+                </div>
+                <div class="hidden md:block">
+                  <div class="flex items-center h-full">
+                    <div class="w-12 h-1 bg-gray-300"></div>
+                    <span class="material-icons text-gray-400 mx-2">arrow_forward</span>
+                    <div class="w-12 h-1 bg-gray-300"></div>
+                  </div>
+                </div>
+                <div>
+                  <p class="text-sm text-gray-500">Return Date & Time</p>
+                  <p class="font-medium">{{ booking.endDate | date:'MMM d, yyyy' }}</p>
+                  <p class="font-medium">{{ booking.endTime || 'Not specified' }}</p>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Locations -->
+            <h3 class="text-lg font-semibold text-[#351243] mb-4">Locations</h3>
+            <div class="bg-gray-50 rounded-lg p-4 mb-6">
+              <div class="flex flex-col md:flex-row md:justify-between">
+                <div class="mb-4 md:mb-0">
+                  <p class="text-sm text-gray-500 flex items-center">
+                    <span class="material-icons text-gray-400 mr-1 text-sm">location_on</span>
+                    Pickup Location
+                  </p>
+                  <p class="font-medium">{{ booking.pickupLocation }}</p>
+                </div>
+                <div>
+                  <p class="text-sm text-gray-500 flex items-center">
+                    <span class="material-icons text-gray-400 mr-1 text-sm">location_off</span>
+                    Return Location
+                  </p>
+                  <p class="font-medium">{{ booking.returnLocation }}</p>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Additional Notes -->
+            <ng-container *ngIf="booking.notes">
+              <div class="mb-6">
+                <h3 class="text-lg font-semibold text-[#351243] mb-4">Additional Notes</h3>
+                <div class="bg-gray-50 rounded-lg p-4">
+                  <p>{{ booking.notes }}</p>
+                </div>
+              </div>
+            </ng-container>
+          </div>
+          
+          <!-- Sidebar -->
+          <div>
+            <!-- Payment Information -->
+            <h3 class="text-lg font-semibold text-[#351243] mb-4">Payment Information</h3>
+            <div class="bg-gray-50 rounded-lg p-4 mb-6">
+              <div class="flex justify-between mb-2">
+                <span class="text-gray-600">Subtotal</span>
+                <span>${{ booking.totalPrice }}</span>
+              </div>
+              <div class="flex justify-between mb-2">
+                <span class="text-gray-600">Taxes & Fees</span>
+                <span>${{ booking.finalPrice - booking.totalPrice }}</span>
+              </div>
+              <div class="border-t border-gray-300 my-2 pt-2 flex justify-between font-bold">
+                <span>Total</span>
+                <span>${{ booking.finalPrice }}</span>
+              </div>
+            </div>
+            
+            <!-- Customer Information -->
+            <h3 class="text-lg font-semibold text-[#351243] mb-4">Customer Information</h3>
+            <div class="bg-gray-50 rounded-lg p-4 mb-6">
+              <ng-container *ngIf="booking.customer">
+                <div class="mb-3">
+                  <p class="text-sm text-gray-500">Name</p>
+                  <p class="font-medium">{{ booking.customer.firstName }} {{ booking.customer.lastName }}</p>
+                </div>
+                <div class="mb-3">
+                  <p class="text-sm text-gray-500">Email</p>
+                  <p class="font-medium">{{ booking.customer.email }}</p>
+                </div>
+                <div class="mb-3">
+                  <p class="text-sm text-gray-500">Phone</p>
+                  <p class="font-medium">{{ booking.customer.phone || 'Not provided' }}</p>
+                </div>
+              </ng-container>
+              <div>
+                <p class="text-sm text-gray-500">Driver's License</p>
+                <p class="font-medium">{{ booking.driverLicenseNumber || 'Not provided' }}</p>
+              </div>
+            </div>
+            
+            <!-- Actions -->
+            <div *ngIf="canCancelBooking()" class="bg-gray-50 rounded-lg p-4">
+              <button 
+                (click)="cancelBooking()" 
+                [disabled]="isCancelling"
+                class="w-full py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center">
+                <span *ngIf="isCancelling" class="inline-block animate-spin mr-2">⟳</span>
+                <span>Cancel Booking</span>
+              </button>
+              <p class="text-xs text-gray-500 mt-2 text-center">
+                Cancellation may be subject to fees based on our policy.
+              </p>
+            </div>
+            
+            <!-- Show message for non-cancellable bookings -->
+            <div *ngIf="!canCancelBooking()" class="bg-gray-50 rounded-lg p-4">
+              <p class="text-center text-gray-600">
+                This booking cannot be cancelled because it's already {{ booking.status.toLowerCase() }}.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -230,6 +230,7 @@
             Clear all images
           </button>
         </div>
+      </div> <!-- Missing closing div for Image Upload Section -->
 
       <!-- Features/Amenities -->
       <div>
@@ -281,7 +282,7 @@
             <label for="hasWiFi" class="text-[#351243] text-sm">WiFi Hotspot</label>
           </div>
         </div>
-      </div>
+      </div> <!-- Added closing div for Features/Amenities -->
 
       <!-- Form Actions -->
       <div class="flex justify-end gap-3 mt-6 pt-4 border-t border-gray-200">
@@ -293,7 +294,7 @@
           Cancel
         </button>
         <button 
-          type="submit" 
+          type="submit"
           [disabled]="vehicleForm.invalid || isSaving" 
           class="px-5 py-2 rounded-lg bg-gradient-to-r from-[#86718e] to-[#351243] text-white font-semibold shadow hover:from-[#351243] hover:to-[#431216] transition-all duration-200 text-sm flex items-center justify-center min-w-[100px]">
           <svg *ngIf="isSaving" class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -303,4 +304,12 @@
           {{ vehicle ? (isSaving ? 'Updating...' : 'Update') : (isSaving ? 'Creating...' : 'Create Vehicle') }}
         </button>
       </div>
+
+      <div class="text-xs text-red-500 mb-2">
+        Form valid: {{!vehicleForm.invalid}} | 
+        Saving: {{isSaving}} | 
+        Required fields filled: {{form.make && form.model && form.year && form.licensePlate && form.category && form.seats && form.transmission && form.fuelType && form.pricePerDay ? 'Yes' : 'No'}}
+      </div>
+    </form>
+  </div> <!-- Fixed indentation for modal content div -->
 </div>

@@ -1,1 +1,137 @@
-<p>customer-details works!</p>
+<div class="p-6">
+  <h2 class="text-2xl font-bold text-[#351243] mb-6">Your Details</h2>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+    <!-- Details Form -->
+    <div class="md:col-span-2">
+      <form [formGroup]="detailsForm" class="space-y-6">
+        <!-- Loading indicator -->
+        <div *ngIf="isLoading" class="flex justify-center my-4">
+          <div class="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-[#351243]"></div>
+        </div>
+        
+        <!-- Pick-up Location -->
+        <div>
+          <label for="pickupLocation" class="block text-sm font-medium text-gray-700 mb-1">Pick-up Location</label>
+          <input 
+            type="text" 
+            id="pickupLocation"
+            formControlName="pickupLocation"
+            placeholder="Enter pick-up address"
+            class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#86718e]">
+          <div *ngIf="detailsForm.get('pickupLocation')?.invalid && detailsForm.get('pickupLocation')?.touched" class="text-red-600 text-xs mt-1">
+            Pick-up location is required
+          </div>
+        </div>
+        
+        <!-- Return Location -->
+        <div>
+          <label for="returnLocation" class="block text-sm font-medium text-gray-700 mb-1">Return Location</label>
+          <div class="flex items-center mb-1">
+            <input 
+              type="text" 
+              id="returnLocation"
+              formControlName="returnLocation"
+              placeholder="Enter return address"
+              class="flex-1 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#86718e]">
+            <button 
+              type="button"
+              (click)="usePickupAsReturn()"
+              class="ml-2 px-3 py-2 bg-gray-100 text-[#351243] text-sm rounded hover:bg-gray-200 transition">
+              Same as pick-up
+            </button>
+          </div>
+          <div *ngIf="detailsForm.get('returnLocation')?.invalid && detailsForm.get('returnLocation')?.touched" class="text-red-600 text-xs mt-1">
+            Return location is required
+          </div>
+        </div>
+        
+        <!-- Driver's License -->
+        <div>
+          <label for="driverLicenseNumber" class="block text-sm font-medium text-gray-700 mb-1">Driver's License Number</label>
+          <input 
+            type="text" 
+            id="driverLicenseNumber"
+            formControlName="driverLicenseNumber"
+            placeholder="Enter your driver's license number"
+            class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#86718e]">
+          <div *ngIf="detailsForm.get('driverLicenseNumber')?.invalid && detailsForm.get('driverLicenseNumber')?.touched" class="text-red-600 text-xs mt-1">
+            Driver's license number is required
+          </div>
+        </div>
+        
+        <!-- Additional Notes -->
+        <div>
+          <label for="notes" class="block text-sm font-medium text-gray-700 mb-1">Special Requests (Optional)</label>
+          <textarea 
+            id="notes"
+            formControlName="notes"
+            rows="3"
+            placeholder="Any special requests or requirements?"
+            class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#86718e]"></textarea>
+        </div>
+        
+        <!-- Terms Agreement -->
+        <div class="mt-6">
+          <div class="flex items-start">
+            <div class="flex items-center h-5">
+              <input 
+                id="agreeToTerms" 
+                formControlName="agreeToTerms"
+                type="checkbox"
+                class="h-4 w-4 text-[#351243] focus:ring-[#86718e] border-gray-300 rounded">
+            </div>
+            <div class="ml-3 text-sm">
+              <label for="agreeToTerms" class="text-gray-700">
+                I agree to the <a href="#" class="text-[#351243] font-medium hover:underline">Terms and Conditions</a> and <a href="#" class="text-[#351243] font-medium hover:underline">Privacy Policy</a>
+              </label>
+              <div *ngIf="detailsForm.get('agreeToTerms')?.invalid && detailsForm.get('agreeToTerms')?.touched" class="text-red-600 text-xs mt-1">
+                You must agree to the terms to continue
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+    
+    <!-- Summary -->
+    <div class="md:col-span-1">
+      <div class="bg-gray-50 p-4 rounded-lg">
+        <h3 class="font-medium text-[#351243] mb-4">Booking Summary</h3>
+        
+        <ng-container *ngIf="bookingStateService.currentState as state">
+          <!-- Vehicle Info -->
+          <div class="mb-4" *ngIf="state.selectedVehicle">
+            <p class="text-sm font-medium text-gray-700">Vehicle</p>
+            <p class="text-[#351243] font-semibold">{{ state.selectedVehicle.make }} {{ state.selectedVehicle.model }}</p>
+            <p class="text-xs text-gray-500">{{ state.selectedVehicle.year }} • {{ state.selectedVehicle.category }}</p>
+          </div>
+          
+          <!-- Dates -->
+          <div class="mb-4" *ngIf="state.startDate && state.endDate">
+            <p class="text-sm font-medium text-gray-700">Rental Period</p>
+            <p class="text-[#351243]">{{ state.startDate | date:'MMM d, y' }} at {{ state.startTime }}</p>
+            <p class="text-[#351243]">to {{ state.endDate | date:'MMM d, y' }} at {{ state.endTime }}</p>
+          </div>
+          
+          <!-- Price Summary -->
+          <div class="pt-3 border-t border-gray-200">
+            <div class="flex justify-between items-center text-sm mb-1">
+              <span class="text-gray-600">Total:</span>
+              <span class="font-medium">${{ state.totalPrice }}</span>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+      
+      <button 
+        (click)="saveAndContinue()"
+        [disabled]="detailsForm.invalid"
+        [ngClass]="{'opacity-50 cursor-not-allowed': detailsForm.invalid, 'hover:from-[#351243] hover:to-[#431216]': !detailsForm.invalid}"
+        class="mt-6 w-full px-4 py-3 bg-gradient-to-r from-[#86718e] to-[#351243] text-white rounded-lg transition flex items-center justify-center font-medium">
+        Continue to Payment
+        <span class="material-icons ml-1 text-sm"> >> </span>
+      </button>
+    </div>
+  </div>
+</div>

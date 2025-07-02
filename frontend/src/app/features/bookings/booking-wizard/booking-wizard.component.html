@@ -1,1 +1,188 @@
-<p>booking-wizard works!</p>
+<div class="flex min-h-screen bg-gradient-to-br from-[#86718e] via-white to-[#431216]">
+  <!-- Sidebar -->
+  <aside class="hidden md:flex w-56 bg-[#351243] text-white flex-col py-8 px-4 shadow-xl">
+    <div class="text-2xl font-bold mb-10 flex items-center">
+      <span class="text-3xl mr-2">🚗</span> Tri-Link
+    </div>
+    <nav class="flex flex-col gap-4">
+      <a 
+        routerLink="/customer/dashboard"
+        routerLinkActive="bg-[#86718e] text-[#351243]"
+        class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-[#86718e] transition font-medium"
+        [routerLinkActiveOptions]="{ exact: true }"
+      >
+        <span>🏠</span> Dashboard
+      </a>
+      <a 
+        routerLink="/customer/book" 
+        routerLinkActive="bg-[#86718e] text-[#351243]"
+        class="menu-item flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-[#86718e] transition font-medium"
+      >
+        <span class="material-icons text-sm">🚗</span> Book a Vehicle
+      </a>
+      <a 
+        routerLink="/profile"
+        routerLinkActive="bg-[#86718e] text-[#351243]"
+        class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-[#86718e] transition font-medium"
+      >
+        <span>👤</span> Profile
+      </a>
+      <a 
+        routerLink="/support"
+        routerLinkActive="bg-[#86718e] text-[#351243]"
+        class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-[#86718e] transition font-medium"
+      >
+        <span>💬</span> Support
+      </a>
+      
+      <!-- Logout option at the bottom -->
+      <div class="mt-auto pt-8 border-t border-[#86718e]">
+        <button 
+          (click)="logout()" 
+          class="w-full bg-red-600 text-white py-2 rounded-lg font-semibold shadow hover:bg-red-700 transition flex items-center justify-center gap-2"
+        >
+          <span>🚪</span> Logout
+        </button>
+      </div>
+    </nav>
+  </aside>
+
+  <!-- Mobile menu button -->
+  <div class="md:hidden fixed top-4 left-4 z-20">
+    <button class="bg-[#351243] text-white p-2 rounded-lg shadow-lg">
+      <span class="material-icons">menu</span>
+    </button>
+  </div>
+
+  <!-- Main content area -->
+  <main class="flex-1 p-4 md:p-8 lg:p-12">
+    <div class="max-w-5xl mx-auto">
+      
+      <!-- Header with breadcrumb -->
+      <div class="mb-8">
+        <div class="text-xs text-[#86718e] mb-2 flex items-center">
+          <a routerLink="/customer/dashboard" class="hover:underline">Dashboard</a>
+          <span class="material-icons text-xs mx-1">chevron_right</span>
+          <span>Book a Vehicle</span>
+        </div>
+        <h1 class="text-3xl md:text-4xl font-bold text-[#351243] mb-2">Book Your Vehicle</h1>
+        <p class="text-[#86718e]">Complete these steps to secure your rental</p>
+      </div>
+
+      <!-- Enhanced Progress Stepper -->
+      <div class="mb-8 bg-white bg-opacity-80 p-4 rounded-xl shadow-md">
+        <div class="flex justify-between items-center">
+          <div *ngFor="let step of steps; let i = index" 
+               class="flex-1 relative text-center">
+            <div 
+              [ngClass]="[
+                'mx-auto w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 shadow',
+                currentStep === step.step ? 'bg-[#351243] text-white scale-110 ring-4 ring-[#86718e] ring-opacity-30' : 
+                currentStep > step.step ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-500'
+              ]"
+              (click)="goToStep(step.step)"
+              [class.cursor-pointer]="canNavigateToStep(step.step)"
+              [class.cursor-not-allowed]="!canNavigateToStep(step.step)">
+              <span *ngIf="currentStep > step.step" class="material-icons">check</span>
+              <span *ngIf="currentStep <= step.step" class="material-icons text-sm">{{ step.icon }}</span>
+            </div>
+            <p class="mt-2 text-sm font-medium hidden sm:block" 
+              [class.text-[#351243]]="currentStep === step.step"
+              [class.font-bold]="currentStep === step.step">
+              {{ step.label }}
+            </p>
+            
+            <!-- Improved progress line between steps -->
+            <div *ngIf="i < steps.length - 1" class="hidden md:block absolute h-1 bg-gray-200 top-5 left-1/2 w-full">
+              <div 
+                [ngClass]="[
+                  'h-full transition-all duration-700 ease-out',
+                  currentStep > step.step ? 'bg-green-500 w-full' : 'bg-gray-200 w-0'
+                ]">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Content with smooth transitions -->
+      <div class="bg-white rounded-xl shadow-lg overflow-hidden transition-all duration-500 mb-6 min-h-[450px]">
+        <div class="animate-fadeIn">
+          <!-- Car Selection -->
+          <div *ngIf="currentStep === BookingStep.CAR_SELECTION">
+            <app-car-selection></app-car-selection>
+          </div>
+
+          <!-- Date & Time Selection -->
+          <div *ngIf="currentStep === BookingStep.DATE_TIME_SELECTION">
+            <app-date-time-selection></app-date-time-selection>
+          </div>
+
+          <!-- Customer Details -->
+          <div *ngIf="currentStep === BookingStep.CUSTOMER_DETAILS">
+            <app-customer-details></app-customer-details>
+          </div>
+
+          <!-- Payment Information -->
+          <div *ngIf="currentStep === BookingStep.PAYMENT_INFORMATION">
+            <app-payment-information></app-payment-information>
+          </div>
+
+          <!-- Confirmation -->
+          <div *ngIf="currentStep === BookingStep.CONFIRMATION">
+            <app-booking-confirmation [bookingId]="bookingId"></app-booking-confirmation>
+          </div>
+        </div>
+      </div>
+
+      <!-- Enhanced Navigation Buttons -->
+      <div class="flex justify-between">
+        <!-- Back Button -->
+        <button 
+          *ngIf="currentStep > BookingStep.CAR_SELECTION && currentStep !== BookingStep.CONFIRMATION" 
+          (click)="prevStep()" 
+          class="px-6 py-2.5 bg-gray-200 text-[#351243] rounded-lg hover:bg-gray-300 transition flex items-center shadow-md">
+          <span class="material-icons mr-1 text-sm"> << </span>
+          Back
+        </button>
+        <div *ngIf="currentStep === BookingStep.CAR_SELECTION || currentStep === BookingStep.CONFIRMATION"></div>
+
+        <!-- Next Button -->
+        <ng-container [ngSwitch]="currentStep">
+          <button 
+            *ngSwitchCase="BookingStep.PAYMENT_INFORMATION"
+            (click)="submitBooking()"
+            [disabled]="isSubmitting"
+            class="px-6 py-2.5 bg-gradient-to-r from-[#86718e] to-[#351243] text-white rounded-lg hover:from-[#351243] hover:to-[#431216] transition flex items-center shadow-md disabled:opacity-60">
+            <span *ngIf="isSubmitting" class="inline-block animate-spin mr-2">⟳</span>
+            <span>Complete Booking</span>
+            <span *ngIf="!isSubmitting" class="material-icons ml-1 text-sm">check</span>
+          </button>
+          
+          <button 
+            *ngSwitchCase="BookingStep.CONFIRMATION"
+            (click)="viewBookings()"
+            class="px-6 py-2.5 bg-gradient-to-r from-[#86718e] to-[#351243] text-white rounded-lg hover:from-[#351243] hover:to-[#431216] transition flex items-center shadow-md">
+            View My Bookings
+            <span class="material-icons ml-1 text-sm"> >> </span>
+          </button>
+          
+          <button 
+            *ngSwitchDefault
+            (click)="nextStep()"
+            class="px-6 py-2.5 bg-gradient-to-r from-[#86718e] to-[#351243] text-white rounded-lg hover:from-[#351243] hover:to-[#431216] transition flex items-center shadow-md">
+            Next
+            <span class="material-icons ml-1 text-sm"> >> </span>
+          </button>
+        </ng-container>
+      </div>
+
+      <!-- Progress indicator -->
+      <div class="mt-6 text-center text-sm text-[#86718e]">
+        Step {{ currentStep + 1 }} of {{ steps.length }}
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- Add this to your CSS for fade-in animation -->

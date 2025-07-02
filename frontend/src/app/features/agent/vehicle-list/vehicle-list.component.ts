@@ -36,11 +36,24 @@ export class VehicleListComponent implements OnInit {
     this.isLoading = true;
     this.vehicleService.getVehicles().subscribe({
       next: (res) => {
-        this.vehicles = res?.data || res || [];
+        // More robust handling of the response
+        if (Array.isArray(res)) {
+          this.vehicles = res;
+        } else if (res && Array.isArray(res.data)) {
+          this.vehicles = res.data;
+        } else if (res && res.data && Array.isArray(res.data)) {
+          this.vehicles = res.data;
+        } else {
+          // If no array is found, initialize as empty array
+          console.error('Unexpected response format:', res);
+          this.vehicles = [];
+        }
         this.isLoading = false;
       },
       error: (err) => {
+        console.error('Error loading vehicles:', err);
         this.error = 'Failed to load vehicles';
+        this.vehicles = []; // Ensure it's always an array
         this.isLoading = false;
       }
     });

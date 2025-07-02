@@ -5,8 +5,8 @@ export class BookingResponseDto {
   bookingNumber: string;
   startDate: Date;
   endDate: Date;
-  startTime: Date;
-  endTime: Date;
+  startTime?: string; // Changed from Date to string with optional marker
+  endTime?: string; // Changed from Date to string with optional marker
   status: BookingStatus;
   totalPrice: number;
   discountPrice?: number;

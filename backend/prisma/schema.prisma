@@ -124,8 +124,8 @@ model Booking {
   bookingNumber String @unique
   startDate   DateTime
   endDate     DateTime
-  startTime   DateTime
-  endTime     DateTime
+  startTime   String?
+  endTime     String?
   status      BookingStatus @default(PENDING)
   totalPrice  Float
   discountPrice Float? @default(0)

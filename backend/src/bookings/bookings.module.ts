@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { BookingService } from './bookings.service';
-import { BookingController } from './bookings.controller';
+import { BookingsService } from './bookings.service';
+import { BookingsController } from './bookings.controller';
 import { ConfigService } from '@nestjs/config';
 import { ApiResponseService } from 'src/shared/api-response.service';
 import { MailerModule } from 'src/shared/mailer/mailer.module';
@@ -12,7 +12,7 @@ import { JwtService } from '@nestjs/jwt';
 
 @Module({
   providers: [
-    BookingService,
+    BookingsService,
     ConfigService,
     ApiResponseService,
     PrismaService,
@@ -21,6 +21,6 @@ import { JwtService } from '@nestjs/jwt';
     JwtService,
   ],
   imports: [MailerModule, VehicleModule],
-  controllers: [BookingController],
+  controllers: [BookingsController],
 })
 export class BookingsModule {}
